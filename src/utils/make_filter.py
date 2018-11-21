@@ -29,8 +29,8 @@ def plot_random_points(height):
     for row_index, row in enumerate(rows):
         marker_style = row_shapes[row_index % len(row_shapes)]
         # number of dots per row
-        dots_per_row = 100
-        pattern_size = 20
+        dots_per_row = 4
+        pattern_size = 4
         pattern_values = []
         pattern_time = []
 
@@ -52,7 +52,7 @@ def plot_random_points(height):
 # Create Figure and Axes instances
 fig = plt.figure(frameon=False)
 # 500 x 500 pixels
-# fig.set_size_inches(5, 5)
+fig.set_size_inches(0.2, 4.8)
 
 # save fig with only spectogram content
 ax = plt.Axes(fig, [0., 0., 1., 1.])
@@ -62,4 +62,4 @@ fig.add_axes(ax)
 plt.margins(x=0)
 plt.ylim(0, 3000)
 plot_random_points((0, 3000))
-plt.savefig(FILTER_DIR + 'filter.png', transparent=True)
+plt.savefig(FILTER_DIR + 'filter2.png', transparent=True)

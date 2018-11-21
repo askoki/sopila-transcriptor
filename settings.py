@@ -10,7 +10,7 @@ PROCESSED_DATA_DIR  = os.path.join(DATA_DIR, 'processed/')
 SPECTROGRAM_PATH = os.path.join(INTERIM_DATA_DIR, 'spectrograms/')
 FILTER_DIR = os.path.join(INTERIM_DATA_DIR, 'filter/')
 FILTER_SPECTROGRAM_DIR = os.path.join(INTERIM_DATA_DIR, 'filter+spectrograms/')
-CUT_DIR = os.path.join(INTERIM_DATA_DIR, 'cut_images/')
+CUT_DIR = os.path.join(INTERIM_DATA_DIR, 'cut_recordings/')
 
 TRAINING_DIR = os.path.join(PROCESSED_DATA_DIR, 'training/')
 TEST_DIR = os.path.join(PROCESSED_DATA_DIR, 'test/')
