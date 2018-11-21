@@ -1,30 +1,17 @@
 # -*- coding: utf-8 -*-
-import click
-import logging
-from pathlib import Path
-from dotenv import find_dotenv, load_dotenv
+from os import remove, path
+import sys
+sys.path.insert(1, path.join(sys.path[0], '../..'))
 
+from settings import RAW_DATA_DIR
+from google_drive_downloader import GoogleDriveDownloader as gdd
 
-@click.command()
-@click.argument('input_filepath', type=click.Path(exists=True))
-@click.argument('output_filepath', type=click.Path())
-def main(input_filepath, output_filepath):
-    """ Runs data processing scripts to turn raw data from (../raw) into
-        cleaned data ready to be analyzed (saved in ../processed).
-    """
-    logger = logging.getLogger(__name__)
-    logger.info('making final data set from raw data')
+FILE_ID = '1jMiQ4iMKaUgN3EDFPS5sSFfRDCH-5Bne'
+gdd.download_file_from_google_drive(
+    file_id=FILE_ID,
+    dest_path=RAW_DATA_DIR + 'data.zip',
+    unzip=True
+)
 
-
-if __name__ == '__main__':
-    log_fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-    logging.basicConfig(level=logging.INFO, format=log_fmt)
-
-    # not used in this stub but often useful for finding various files
-    project_dir = Path(__file__).resolve().parents[2]
-
-    # find .env automagically by walking up directories until it's found, then
-    # load up the .env entries as environment variables
-    load_dotenv(find_dotenv())
-
-    main()
+print("Removing downloaded zip file ...")
+remove(RAW_DATA_DIR + 'data.zip')
