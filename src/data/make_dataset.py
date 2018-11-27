@@ -2,12 +2,15 @@
 import os
 import sys
 sys.path.insert(1, os.path.join(sys.path[0], '../..'))
+sys.path.insert(1, os.path.join(sys.path[0], '../features'))
+
 
 from google_drive_downloader import GoogleDriveDownloader as gdd
 from helpers.file_helpers import clear_dir, create_directories
 from settings import RAW_DATA_DIR, INTERIM_DATA_DIR, \
     PROCESSED_DATA_DIR, SPECTROGRAM_PATH, FILTER_DIR, \
-    FILTER_SPECTROGRAM_DIR, CUT_DIR, TRAINING_DIR, TEST_DIR
+    FILTER_SPECTROGRAM_DIR, CUT_DIR, TRAINING_DIR, TEST_DIR,
+    VALIDATION_DIR
 
 
 # create base data folder structure
@@ -20,6 +23,7 @@ directories_to_create = [
     FILTER_SPECTROGRAM_DIR,
     CUT_DIR,
     TRAINING_DIR,
+    VALIDATION_DIR,
     TEST_DIR
 ]
 

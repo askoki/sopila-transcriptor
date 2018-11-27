@@ -50,3 +50,4 @@ for folder in recordings_folders:
         # remove .wav
         image_name = file[:-4]
         plt.savefig(SPECTROGRAM_PATH + folder + '/' + file[:-4] + '.jpg')
+        plt.close()

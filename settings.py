@@ -13,6 +13,7 @@ FILTER_SPECTROGRAM_DIR = os.path.join(INTERIM_DATA_DIR, 'filter+spectrograms/')
 CUT_DIR = os.path.join(INTERIM_DATA_DIR, 'cut_recordings/')
 
 TRAINING_DIR = os.path.join(PROCESSED_DATA_DIR, 'training/')
+VALIDATION_DIR = os.path.join(PROCESSED_DATA_DIR, 'validation/')
 TEST_DIR = os.path.join(PROCESSED_DATA_DIR, 'test/')
 
 MODEL_DIR = os.path.join(ROOT_DIR, 'models/')

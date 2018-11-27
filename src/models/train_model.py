@@ -2,7 +2,7 @@ import os
 import sys
 sys.path.insert(1, os.path.join(sys.path[0], '../..'))
 
-from settings import TRAINING_DIR, TEST_DIR, MODEL_DIR, FIGURES_DIR
+from settings import TRAINING_DIR, VALIDATION_DIR, MODEL_DIR, FIGURES_DIR
 import keras
 import matplotlib.pyplot as plt
 from keras.models import Sequential
@@ -32,16 +32,17 @@ train_generator = train_datagen.flow_from_directory(
     color_mode='rgb',
     batch_size=batch_size,
     class_mode='categorical',
-    shuffle='True'
+    shuffle=True
 )
 
 validation_generator = val_datagen.flow_from_directory(
-    TEST_DIR,
+    VALIDATION_DIR,
     target_size=(img_rows, img_cols),
     color_mode='rgb',
+    # classes=class_labels
     batch_size=batch_size,
     class_mode='categorical',
-    shuffle='True'
+    shuffle=True
 )
 
 model = Sequential()
@@ -85,7 +86,7 @@ plt.plot(history.history['val_acc'])
 plt.title('model accuracy')
 plt.ylabel('accuracy')
 plt.xlabel('epoch')
-plt.legend(['train', 'test'], loc='upper left')
+plt.legend(['train', 'validation'], loc='upper left')
 # plt.show()
 plt.savefig(FIGURES_DIR + 'accuracy.jpg')
 plt.clf()
@@ -97,7 +98,7 @@ plt.plot(history.history['val_loss'])
 plt.title('model loss')
 plt.ylabel('loss')
 plt.xlabel('epoch')
-plt.legend(['train', 'test'], loc='upper left')
+plt.legend(['train', 'validation'], loc='upper left')
 # plt.show()
 plt.savefig(FIGURES_DIR + 'loss.jpg')
 
