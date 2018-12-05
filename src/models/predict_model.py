@@ -4,17 +4,26 @@ sys.path.insert(1, os.path.join(sys.path[0], '../..'))
 
 from settings import MODEL_DIR, FIGURES_DIR, TEST_DIR, FILTER_SPECTROGRAM_DIR
 from keras.preprocessing import image
-from keras.models import Sequential
-from keras.layers import Dense, Dropout, Flatten
-from keras.layers import Conv2D, MaxPooling2D
 from sklearn.metrics import confusion_matrix
+from model import get_model
 import matplotlib.pyplot as plt
 import keras
 import itertools
+import re
 import numpy as np
 
 
+def natural_sort(l):
+    '''
+    needed in order to sort numbers and strings
+    '''
+    convert = lambda text: int(text) if text.isdigit() else text.lower()
+    alphanum_key = lambda key: [convert(c) for c in re.split('([0-9]+)', key)]
+    return sorted(l, key=alphanum_key)
+
 # took from scikit-learn.org example
+
+
 def plot_confusion_matrix(cm, classes,
                           normalize=False,
                           title='Confusion matrix',
@@ -52,85 +61,76 @@ def plot_confusion_matrix(cm, classes,
 # dimensions of our images
 img_height, img_width = 480, 20
 input_shape = (img_height, img_width, 3)
-num_classes = 12
+num_classes = 7
 
-class_labels = [
-    'm0', 'm1', 'm2', 'm3', 'm4', 'm5', 'm6',
-    'v0', 'v1', 'v2', 'v3', 'v4', 'v5', 'v6'
+class_labels = [[
+        'm0', 'm1', 'm2', 'm3', 'm4', 'm5', 'blank'
+    ], [
+        'v0', 'v1', 'v2', 'v3', 'v4', 'v5', 'blank'
+    ]
 ]
 
-# model must be the same as trained
-model = Sequential()
-model.add(Conv2D(
-    32,
-    kernel_size=(3, 3),
-    activation='relu',
-    input_shape=input_shape
-))
+data_models = os.listdir(TEST_DIR)
 
-model.add(Conv2D(64, (3, 3), activation='relu'))
-model.add(MaxPooling2D(pool_size=(2, 2)))
-model.add(Dropout(0.25))
-model.add(Flatten())
-model.add(Dense(128, activation='relu'))
-model.add(Dropout(0.5))
-model.add(Dense(num_classes, activation='softmax'))
+for l_idx, data_model in enumerate(data_models):
 
-# load the model we saved
-model.load_weights(MODEL_DIR + 'model.h5')
-model.compile(
-    loss=keras.losses.categorical_crossentropy,
-    optimizer=keras.optimizers.Adadelta(),
-    metrics=['accuracy']
-)
+    # model must be the same as trained
+    model = get_model(input_shape, num_classes)
 
-# use test set
-test_datagen = image.ImageDataGenerator(rescale=1. / 255)
+    # load the model we saved
+    model.load_weights(MODEL_DIR + data_model + '/' + 'model3.h5')
+    model.compile(
+        loss=keras.losses.categorical_crossentropy,
+        optimizer=keras.optimizers.Adadelta(),
+        metrics=['accuracy']
+    )
 
-batch_size = 50
-test_batches = test_datagen.flow_from_directory(
-    TEST_DIR,
-    target_size=(img_height, img_width),
-    color_mode='rgb',
-    batch_size=batch_size,
-    class_mode='categorical'
-)
+    # use test set
+    test_datagen = image.ImageDataGenerator(rescale=1. / 255)
 
+    batch_size = 50
+    test_batches = test_datagen.flow_from_directory(
+        TEST_DIR + data_model + '/',
+        target_size=(img_height, img_width),
+        color_mode='rgb',
+        batch_size=batch_size,
+        class_mode='categorical'
+    )
 
-true_classes = []
-predicted_classes = []
+    true_classes = []
+    predicted_classes = []
 
-folders = os.listdir(TEST_DIR)
-folders.sort()
+    folders = os.listdir(TEST_DIR + data_model + '/')
+    folders = natural_sort(folders)
 
+    for i, folder in enumerate(folders):
 
-for i, folder in enumerate(folders):
+        class_folder = TEST_DIR + data_model + '/' + folder
+        class_image_data = []
 
-    class_folder = TEST_DIR + '/' + folder
-    class_image_data = []
+        for data in os.listdir(class_folder):
 
-    for data in os.listdir(class_folder):
+            image_path = class_folder + '/' + data
 
-        image_path = class_folder + '/' + data
+            img = image.load_img(
+                image_path, target_size=(img_height, img_width))
+            x = image.img_to_array(img)
+            x = np.expand_dims(x, axis=0)
+            class_image_data.append(x)
 
-        img = image.load_img(image_path, target_size=(img_height, img_width))
-        x = image.img_to_array(img)
-        x = np.expand_dims(x, axis=0)
-        class_image_data.append(x)
+        # add true class index as many times as there are test data for that
+        # class
+        true_classes.extend([i] * len(class_image_data))
 
-    # add true class index as many times as there are test data for that class
-    true_classes.extend([i] * len(class_image_data))
+        # stack arrays vertically
+        array_row = np.vstack(class_image_data)
 
-    # stack arrays vertically
-    array_row = np.vstack(class_image_data)
+        # predicted class
+        predicted_class = model.predict_classes(array_row, batch_size=20)
+        predicted_classes.extend(predicted_class)
 
-    # predicted class
-    predicted_class = model.predict_classes(array_row, batch_size=20)
-    predicted_classes.extend(predicted_class)
-
-
-cm = confusion_matrix(true_classes, predicted_classes)
-plt.figure("Confusion matrix")
-plot_confusion_matrix(cm, class_labels)
-plt.savefig(FIGURES_DIR + 'confusion_matrix.jpg')
-plt.show()
+    cm = confusion_matrix(true_classes, predicted_classes)
+    plt.figure("Confusion matrix")
+    plot_confusion_matrix(cm, class_labels[l_idx])
+    plt.savefig(FIGURES_DIR + data_model + '/' + 'confusion_matrix3.jpg')
+    plt.show()

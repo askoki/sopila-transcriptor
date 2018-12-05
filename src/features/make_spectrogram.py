@@ -3,11 +3,16 @@ import os
 import sys
 sys.path.insert(1, os.path.join(sys.path[0], '../..'))
 
-from settings import CUT_DIR, SPECTROGRAM_PATH
 from helpers.file_helpers import create_directory, clear_dir
 from scipy.signal import stft, spectrogram
 from scipy.io import wavfile
 from os import listdir
+
+# alternative dir
+if len(sys.argv) > 1:
+    from settings import REAL_DATA_CUT as CUT_DIR, REAL_DATA_SPEC as SPECTROGRAM_PATH
+else:
+    from settings import CUT_DIR, SPECTROGRAM_PATH
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -18,36 +23,53 @@ import pylab
 clear_dir(SPECTROGRAM_PATH)
 
 # remove hidden files
-recordings_folders = [f for f in listdir(CUT_DIR) if not f.startswith('.')]
-recordings_folders.sort()
+# recordings_folders = [f for f in listdir(CUT_DIR) if not f.startswith('.')]
+models_folders = listdir(CUT_DIR)
+models_folders.sort()
 
-for folder in recordings_folders:
-    folder_files = listdir(CUT_DIR + folder + '/')
+for model in models_folders:
+    recordings_folders = listdir(CUT_DIR + model + '/')
+    recordings_folders.sort()
 
-    create_directory(SPECTROGRAM_PATH + folder + '/')
-    for file in folder_files:
-        # read in a wav file
-        sample_rate, data = wavfile.read(CUT_DIR + folder + '/' + file)
-        # mono wav file
-        samples = data.shape[0]
+    for folder in recordings_folders:
 
-        # Create Figure and Axes instances
-        fig = plt.figure(frameon=False)
-        # 20 x 480 pixels
-        fig.set_size_inches(0.2, 4.8)
+        folder_files = listdir(CUT_DIR + model + '/' + folder + '/')
+        create_directory(SPECTROGRAM_PATH + model + '/' + folder + '/')
 
-        # save fig with only spectogram content
-        ax = plt.Axes(fig, [0., 0., 1., 1.])
-        ax.set_axis_off()
-        fig.add_axes(ax)
+        number_of_images = len(folder_files)
+        for i, file in enumerate(folder_files):
+            # print progress
+            print('\rFolder: %s %d/%d\r' % (folder, i, number_of_images))
+            # read in a wav file
+            sample_rate, data = wavfile.read(CUT_DIR + model + '/' + folder + '/' + file)
+            # mono wav file
+            samples = data.shape[0]
 
-        f, t, Sxx = spectrogram(data, sample_rate)
-        dBS = 10 * np.log10(Sxx)  # convert to dB
-        plt.pcolormesh(t, f, dBS)
+            # Create Figure and Axes instances
+            fig = plt.figure(frameon=False)
+            # 20 x 480 pixels
+            fig.set_size_inches(0.2, 4.8)
 
-        plt.ylim(0, 3000)
+            # save fig with only spectogram content
+            ax = plt.Axes(fig, [0., 0., 1., 1.])
+            ax.set_axis_off()
+            fig.add_axes(ax)
 
-        # remove .wav
-        image_name = file[:-4]
-        plt.savefig(SPECTROGRAM_PATH + folder + '/' + file[:-4] + '.jpg')
-        plt.close()
+            f, t, Sxx = spectrogram(data, sample_rate)
+            dBS = 10 * np.log10(Sxx)  # convert to dB
+
+            # 30 do is like Quiet rural area
+            # 10 db is like Breathing.
+            CUTOFF_THRESHOLD_DB = 25
+
+            # all values below threshold are set to 0 db
+            dBS[dBS < CUTOFF_THRESHOLD_DB] = 0
+
+            plt.pcolormesh(t, f, dBS)
+            plt.ylim(0, 3000)
+
+            # remove .wav
+            image_name = file[:-4]
+
+            plt.savefig(SPECTROGRAM_PATH + model + '/' + folder + '/' + file[:-4] + '.jpg')
+            plt.close()

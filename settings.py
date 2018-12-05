@@ -19,3 +19,11 @@ TEST_DIR = os.path.join(PROCESSED_DATA_DIR, 'test/')
 MODEL_DIR = os.path.join(ROOT_DIR, 'models/')
 REPORTS_DIR = os.path.join(ROOT_DIR, 'reports/')
 FIGURES_DIR = os.path.join(REPORTS_DIR, 'figures/')
+
+# test
+REAL_DATA_DIR = os.path.join(DATA_DIR, 'real_data/')
+
+REAL_DATA_CUT = os.path.join(REAL_DATA_DIR, 'cut/')
+REAL_DATA_RAW = os.path.join(REAL_DATA_DIR, 'raw/')
+REAL_DATA_SPEC = os.path.join(REAL_DATA_DIR, 'spec/')
+REAL_DATA_FILTER_SPEC = os.path.join(REAL_DATA_DIR, 'spec+filter/')

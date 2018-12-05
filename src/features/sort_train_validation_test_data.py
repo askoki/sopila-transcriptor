@@ -19,32 +19,46 @@ folders.sort()
 training_volume = 0.8
 validation_volume = 0.1
 
+models_folders = listdir(FILTER_SPECTROGRAM_DIR)
+models_folders.sort()
 
-for folder in folders:
-    create_directory(TRAINING_DIR + folder + '/')
-    create_directory(VALIDATION_DIR + folder + '/')
-    create_directory(TEST_DIR + folder + '/')
+for model in models_folders:
 
-    folder_files = listdir(FILTER_SPECTROGRAM_DIR + folder + '/')
-    # randomize data
-    for i in range(100):
-        shuffle(folder_files)
+    model_folder = listdir(FILTER_SPECTROGRAM_DIR + model + '/')
+    model_folder.sort()
 
-    train_split_index = int(training_volume * len(folder_files))
-    test_split_index = int(
-        (training_volume + validation_volume) * len(folder_files))
+    for folder in model_folder:
+        create_directory(TRAINING_DIR + model + '/' + folder + '/')
+        create_directory(VALIDATION_DIR + model + '/' + folder + '/')
+        create_directory(TEST_DIR + model + '/' + folder + '/')
 
-    training_files = folder_files[:train_split_index]
-    for filename in training_files:
-        copy2(FILTER_SPECTROGRAM_DIR + folder + '/' +
-              filename, TRAINING_DIR + folder + '/' + filename)
+        folder_files = listdir(FILTER_SPECTROGRAM_DIR +
+                               model + '/' + folder + '/')
+        # randomize data
+        for i in range(100):
+            shuffle(folder_files)
 
-    validation_files = folder_files[train_split_index:test_split_index]
-    for filename in validation_files:
-        copy2(FILTER_SPECTROGRAM_DIR + folder + '/' + filename,
-              VALIDATION_DIR + folder + '/' + filename)
+        train_split_index = int(training_volume * len(folder_files))
+        test_split_index = int(
+            (training_volume + validation_volume) * len(folder_files))
 
-    test_files = folder_files[test_split_index:]
-    for filename in test_files:
-        copy2(FILTER_SPECTROGRAM_DIR + folder + '/' +
-              filename, TEST_DIR + folder + '/' + filename)
+        training_files = folder_files[:train_split_index]
+        for filename in training_files:
+            copy2(
+                FILTER_SPECTROGRAM_DIR + model + '/' + folder + '/' + filename,
+                TRAINING_DIR + model + '/' + folder + '/' + filename
+            )
+
+        validation_files = folder_files[train_split_index:test_split_index]
+        for filename in validation_files:
+            copy2(
+                FILTER_SPECTROGRAM_DIR + model + '/' + folder + '/' + filename,
+                VALIDATION_DIR + model + '/' + folder + '/' + filename
+            )
+
+        test_files = folder_files[test_split_index:]
+        for filename in test_files:
+            copy2(
+                FILTER_SPECTROGRAM_DIR + model + '/' + folder + '/' + filename,
+                TEST_DIR + model + '/' + folder + '/' + filename
+            )
