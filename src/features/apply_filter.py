@@ -29,6 +29,13 @@ for model in models_folders:
 
         create_directory(FILTER_SPECTROGRAM_DIR + model + '/' + folder + '/')
         for image in folder_files:
-            background = Image.open(SPECTROGRAM_PATH + model + '/' + folder + '/' + image).convert('RGBA')
+
+            background = Image.open(
+                SPECTROGRAM_PATH + model + '/' + folder + '/' + image
+            ).convert('RGBA')
+
             background.paste(foreground, (0, 0), foreground)
-            background.save(FILTER_SPECTROGRAM_DIR + model + '/' + folder + '/' + image[:-4] + '+filter.png')
+            background.save(
+                FILTER_SPECTROGRAM_DIR + model + '/' +
+                folder + '/' + image[:-4] + '+filter.png'
+            )

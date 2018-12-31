@@ -62,7 +62,11 @@ for data_model in data_models:
         verbose=1,
         validation_data=validation_generator,
         validation_steps=batch_size,
-        callbacks=[keras.callbacks.EarlyStopping(monitor='val_loss', min_delta=0.00001)]
+        callbacks=[
+            keras.callbacks.EarlyStopping(
+                monitor='val_loss', min_delta=0.00001
+            )
+        ]
     )
 
     # list all data in history
@@ -77,7 +81,7 @@ for data_model in data_models:
     plt.xlabel('epoch')
     plt.legend(['train', 'validation'], loc='upper left')
     # plt.show()
-    plt.savefig(FIGURES_DIR + data_model + '/' + 'accuracy3.jpg')
+    plt.savefig(FIGURES_DIR + data_model + '/' + 'accuracy_10_no.jpg')
     plt.clf()
 
     # summarize history for loss
@@ -89,13 +93,13 @@ for data_model in data_models:
     plt.xlabel('epoch')
     plt.legend(['train', 'validation'], loc='upper left')
     # plt.show()
-    plt.savefig(FIGURES_DIR + data_model + '/' + 'loss3.jpg')
+    plt.savefig(FIGURES_DIR + data_model + '/' + 'loss_10_no.jpg')
 
     # serialize model to JSON
     model_json = model.to_json()
-    with open(MODEL_DIR + data_model + '/' + 'model3.json', 'w') as json_file:
+    with open(MODEL_DIR + data_model + '/' + 'model_10_no.json', 'w') as json_file:
         json_file.write(model_json)
 
     # serialize weights to HDF5
-    model.save_weights(MODEL_DIR + data_model + '/' + 'model3.h5')
+    model.save_weights(MODEL_DIR + data_model + '/' + 'model_10_no.h5')
     print('Saved model to disk')

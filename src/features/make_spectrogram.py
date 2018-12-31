@@ -41,7 +41,9 @@ for model in models_folders:
             # print progress
             print('\rFolder: %s %d/%d\r' % (folder, i, number_of_images))
             # read in a wav file
-            sample_rate, data = wavfile.read(CUT_DIR + model + '/' + folder + '/' + file)
+            sample_rate, data = wavfile.read(
+                CUT_DIR + model + '/' + folder + '/' + file
+            )
             # mono wav file
             samples = data.shape[0]
 
@@ -71,5 +73,8 @@ for model in models_folders:
             # remove .wav
             image_name = file[:-4]
 
-            plt.savefig(SPECTROGRAM_PATH + model + '/' + folder + '/' + file[:-4] + '.jpg')
+            plt.savefig(
+                SPECTROGRAM_PATH + model + '/' +
+                folder + '/' + file[:-4] + '.jpg'
+            )
             plt.close()

@@ -32,10 +32,11 @@ for model in models_folders:
         for file in folder_files:
             start = 0
             # in miliseconds
-            step = 50
+            step = 10
             title = str(step) + "ms"
 
-            audioFile = AudioSegment.from_wav(RAW_DATA_DIR + model + '/' + folder + '/' + file)
+            audioFile = AudioSegment.from_wav(
+                RAW_DATA_DIR + model + '/' + folder + '/' + file)
 
             # measured in miliseconds
             duration = len(audioFile)
@@ -44,7 +45,8 @@ for model in models_folders:
             for i in range(0, number_of_segments):
                 end = start + step
                 newAudio = audioFile[start:end]
-                filepath = CUT_DIR + model + '/' + folder + '/' + title + str(numeration) + '.wav'
+                filepath = CUT_DIR + model + '/' + folder + \
+                    '/' + title + str(numeration) + '.wav'
                 newAudio.export(filepath, format="wav")
                 start += step
                 numeration += 1
