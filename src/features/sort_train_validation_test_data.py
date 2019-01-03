@@ -8,6 +8,7 @@ from helpers.file_helpers import create_directory, clear_dir
 from os import listdir, remove
 from shutil import copy2
 from random import shuffle
+import sys
 
 clear_dir(TRAINING_DIR)
 clear_dir(VALIDATION_DIR)
@@ -84,7 +85,8 @@ for model in models_folders:
         if not 'silence' in folder:
             folder_files = folder_files[:NUMBER_PER_TONE]
             # sopila tones to insert as class in opposite model (ex. m in v)
-            all_files_per_model[model][folder] = folder_files[:FOREIGN_SOPILA_NUM]
+            all_files_per_model[model][
+                folder] = folder_files[:FOREIGN_SOPILA_NUM]
 
         copy_data_files(
             folder_files,
@@ -93,21 +95,22 @@ for model in models_folders:
             training_volume=0.8
         )
 
-# add opposite model in model data
-# m in v and opposite
+# if other is turned on
+if len(sys.argv) > 1:
+    # add opposite model in model data
+    # m in v and opposite
+    for folder, files in all_files_per_model['v'].items():
+        copy_data_files(
+            files,
+            'v',
+            folder,
+            'v_other'
+        )
 
-# for folder, files in all_files_per_model['v'].items():
-#     copy_data_files(
-#         files,
-#         'v',
-#         folder,
-#         'other'
-#     )
-
-# for folder, files in all_files_per_model['m'].items():
-#     copy_data_files(
-#         files,
-#         'm',
-#         folder,
-#         'other'
-#     )
+    for folder, files in all_files_per_model['m'].items():
+        copy_data_files(
+            files,
+            'm',
+            folder,
+            'm_other'
+        )

@@ -12,6 +12,12 @@ import itertools
 import re
 import numpy as np
 
+# provide model name
+model_name = str(sys.argv[1])
+
+matrix_name = sys.argv[2]
+is_other = True if len(sys.argv) >= 4 else False
+
 
 def natural_sort(l):
     '''
@@ -58,17 +64,32 @@ def plot_confusion_matrix(cm, classes,
     plt.xlabel('Predicted label')
     plt.tight_layout()
 
+
+def save_list_to_file(file, predicted_list, filename):
+    file.write('\n#' + filename + '\n')
+    file.write(str(predicted_list))
+
 # dimensions of our images
 img_height, img_width = 480, 20
 input_shape = (img_height, img_width, 3)
-num_classes = 7
 
-class_labels = [[
-        'm0', 'm1', 'm2', 'm3', 'm4', 'm5', 'blank'
-    ], [
-        'v0', 'v1', 'v2', 'v3', 'v4', 'v5', 'blank'
+# use test set
+test_datagen = image.ImageDataGenerator(rescale=1. / 255)
+batch_size = 50
+
+
+if is_other:
+    num_classes = 8
+    class_labels = [
+        ['m0', 'm1', 'm2', 'm3', 'm4', 'm5', 'other', 'blank'],
+        ['v0', 'v1', 'v2', 'v3', 'v4', 'v5', 'other', 'blank']
     ]
-]
+else:
+    num_classes = 7
+    class_labels = [
+        ['m0', 'm1', 'm2', 'm3', 'm4', 'm5', 'blank'],
+        ['v0', 'v1', 'v2', 'v3', 'v4', 'v5', 'blank']
+    ]
 
 data_models = os.listdir(TEST_DIR)
 
@@ -78,17 +99,13 @@ for l_idx, data_model in enumerate(data_models):
     model = get_model(input_shape, num_classes)
 
     # load the model we saved
-    model.load_weights(MODEL_DIR + data_model + '/' + 'model3.h5')
+    model.load_weights(MODEL_DIR + data_model + '/' + model_name + '.h5')
     model.compile(
         loss=keras.losses.categorical_crossentropy,
         optimizer=keras.optimizers.Adadelta(),
         metrics=['accuracy']
     )
 
-    # use test set
-    test_datagen = image.ImageDataGenerator(rescale=1. / 255)
-
-    batch_size = 50
     test_batches = test_datagen.flow_from_directory(
         TEST_DIR + data_model + '/',
         target_size=(img_height, img_width),
@@ -132,5 +149,54 @@ for l_idx, data_model in enumerate(data_models):
     cm = confusion_matrix(true_classes, predicted_classes)
     plt.figure("Confusion matrix")
     plot_confusion_matrix(cm, class_labels[l_idx])
-    plt.savefig(FIGURES_DIR + data_model + '/' + 'confusion_matrix3.jpg')
-    plt.show()
+    plt.savefig(FIGURES_DIR + data_model + '/' +
+                'confusion_matrix_' + matrix_name + '.jpg')
+    plt.clf()
+    plt.clf()
+    plt.close()
+    # plt.show()
+
+    # ------ real data predict
+
+    from settings import REAL_DATA_FILTER_SPEC
+
+    file = open(model_name + '_' + data_model + '.txt', 'a+')
+
+    test_batches = test_datagen.flow_from_directory(
+        REAL_DATA_FILTER_SPEC,
+        target_size=(img_height, img_width),
+        color_mode='rgb',
+        batch_size=batch_size,
+        class_mode='categorical'
+    )
+
+    true_classes = []
+    predicted_classes = []
+
+    folders = os.listdir(REAL_DATA_FILTER_SPEC + data_model + '/')
+    folders.sort()
+
+    for i, folder in enumerate(folders):
+
+        class_folder = REAL_DATA_FILTER_SPEC + data_model + '/' + folder
+        class_image_data = []
+
+        files_sorted = os.listdir(class_folder)
+        files_sorted = natural_sort(files_sorted)
+        for data in files_sorted:
+
+            image_path = class_folder + '/' + data
+
+            img = image.load_img(
+                image_path, target_size=(img_height, img_width))
+            x = image.img_to_array(img)
+            x = np.expand_dims(x, axis=0)
+            class_image_data.append(x)
+
+        # stack arrays vertically
+        array_row = np.vstack(class_image_data)
+
+        # predicted class
+        predicted_class = model.predict_classes(array_row, batch_size=20)
+        save_list_to_file(file, predicted_class, folder)
+    file.close()

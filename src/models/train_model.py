@@ -8,13 +8,22 @@ import matplotlib.pyplot as plt
 from model import get_model
 from keras.preprocessing.image import ImageDataGenerator
 
+
+# number of classes required argument
+num_classes = int(sys.argv[1])
+
+data_name = 'default_name'
+# provide name
+if len(sys.argv) > 2:
+    data_name = str(sys.argv[2])
+
 batch_size = 50
 epochs = 12
 
 # input image dimensions
 img_rows, img_cols = 480, 20
 input_shape = (img_rows, img_cols, 3)
-num_classes = 7
+
 
 data_models = os.listdir(TRAINING_DIR)
 
@@ -81,7 +90,7 @@ for data_model in data_models:
     plt.xlabel('epoch')
     plt.legend(['train', 'validation'], loc='upper left')
     # plt.show()
-    plt.savefig(FIGURES_DIR + data_model + '/' + 'accuracy_10_no.jpg')
+    plt.savefig(FIGURES_DIR + data_model + '/' + 'accuracy_' + data_name + '.jpg')
     plt.clf()
 
     # summarize history for loss
@@ -93,13 +102,13 @@ for data_model in data_models:
     plt.xlabel('epoch')
     plt.legend(['train', 'validation'], loc='upper left')
     # plt.show()
-    plt.savefig(FIGURES_DIR + data_model + '/' + 'loss_10_no.jpg')
+    plt.savefig(FIGURES_DIR + data_model + '/' + 'loss_' + data_name + '.jpg')
 
     # serialize model to JSON
     model_json = model.to_json()
-    with open(MODEL_DIR + data_model + '/' + 'model_10_no.json', 'w') as json_file:
+    with open(MODEL_DIR + data_model + '/' + 'model_' + data_name + '.json', 'w') as json_file:
         json_file.write(model_json)
 
     # serialize weights to HDF5
-    model.save_weights(MODEL_DIR + data_model + '/' + 'model_10_no.h5')
+    model.save_weights(MODEL_DIR + data_model + '/' + 'model_' + data_name + '.h5')
     print('Saved model to disk')

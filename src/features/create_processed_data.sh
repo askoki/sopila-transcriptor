@@ -2,7 +2,7 @@
 
 # 1. step cut recordings
 echo '1. Cutting recordings'
-python cut_original_recordings.py
+python cut_original_recordings.py 50
 
 # 2. step make spectrogram images from cut recordings
 echo '2. Making spectrogram images from cut recordings...'
@@ -19,4 +19,9 @@ python apply_filter.py
 # 5. distribute images to training and test set in processed data folder
 echo '5. Creating training, validation and test set...'
 python sort_train_validation_test_data.py
+
+# # train
+# python ../models/train_model.py
+# # predict
+# python ../models/predict_model.py
 

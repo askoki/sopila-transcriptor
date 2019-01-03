@@ -6,8 +6,14 @@ from helpers.file_helpers import create_directory, clear_dir
 from pydub import AudioSegment
 from os import listdir
 
+# pass number of ms in a timeframe (10, 20, 25, 50)
+if not len(sys.argv) > 1:
+    step = 25
+else:
+    step = int(sys.argv[1])
+
 # alternative dir
-if len(sys.argv) > 1:
+if len(sys.argv) > 2:
     from settings import REAL_DATA_RAW as RAW_DATA_DIR, REAL_DATA_CUT as CUT_DIR
 else:
     from settings import RAW_DATA_DIR, CUT_DIR
@@ -32,7 +38,6 @@ for model in models_folders:
         for file in folder_files:
             start = 0
             # in miliseconds
-            step = 10
             title = str(step) + "ms"
 
             audioFile = AudioSegment.from_wav(
