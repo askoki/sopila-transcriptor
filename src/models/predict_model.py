@@ -12,11 +12,12 @@ import itertools
 import re
 import numpy as np
 
-# provide model name
-model_name = str(sys.argv[1])
+# number of classes required argument
+num_classes = int(sys.argv[1])
 
-matrix_name = sys.argv[2]
-is_other = True if len(sys.argv) >= 4 else False
+# provide model name
+model_name = str(sys.argv[2])
+matrix_name = sys.argv[3]
 
 
 def natural_sort(l):
@@ -78,125 +79,113 @@ test_datagen = image.ImageDataGenerator(rescale=1. / 255)
 batch_size = 50
 
 
-if is_other:
-    num_classes = 8
-    class_labels = [
-        ['m0', 'm1', 'm2', 'm3', 'm4', 'm5', 'other', 'blank'],
-        ['v0', 'v1', 'v2', 'v3', 'v4', 'v5', 'other', 'blank']
-    ]
-else:
-    num_classes = 7
-    class_labels = [
-        ['m0', 'm1', 'm2', 'm3', 'm4', 'm5', 'blank'],
-        ['v0', 'v1', 'v2', 'v3', 'v4', 'v5', 'blank']
-    ]
+class_labels = [
+    'm0', 'm1', 'm2', 'm3', 'm4', 'm5',
+    'v0', 'v1', 'v2', 'v3', 'v4', 'v5', 'blank',
+]
 
-data_models = os.listdir(TEST_DIR)
+# model must be the same as trained
+model = get_model(input_shape, num_classes)
 
-for l_idx, data_model in enumerate(data_models):
+# load the model we saved
+model.load_weights(MODEL_DIR + '/' + model_name + '.h5')
+model.compile(
+    loss=keras.losses.categorical_crossentropy,
+    optimizer=keras.optimizers.Adadelta(),
+    metrics=['accuracy']
+)
 
-    # model must be the same as trained
-    model = get_model(input_shape, num_classes)
+test_batches = test_datagen.flow_from_directory(
+    TEST_DIR + '/',
+    target_size=(img_height, img_width),
+    color_mode='rgb',
+    batch_size=batch_size,
+    class_mode='categorical'
+)
 
-    # load the model we saved
-    model.load_weights(MODEL_DIR + data_model + '/' + model_name + '.h5')
-    model.compile(
-        loss=keras.losses.categorical_crossentropy,
-        optimizer=keras.optimizers.Adadelta(),
-        metrics=['accuracy']
-    )
+true_classes = []
+predicted_classes = []
 
-    test_batches = test_datagen.flow_from_directory(
-        TEST_DIR + data_model + '/',
-        target_size=(img_height, img_width),
-        color_mode='rgb',
-        batch_size=batch_size,
-        class_mode='categorical'
-    )
+folders = os.listdir(TEST_DIR + '/')
+folders = natural_sort(folders)
 
-    true_classes = []
-    predicted_classes = []
+for i, folder in enumerate(folders):
 
-    folders = os.listdir(TEST_DIR + data_model + '/')
-    folders = natural_sort(folders)
+    class_folder = TEST_DIR + '/' + folder
+    class_image_data = []
 
-    for i, folder in enumerate(folders):
+    for data in os.listdir(class_folder):
 
-        class_folder = TEST_DIR + data_model + '/' + folder
-        class_image_data = []
+        image_path = class_folder + '/' + data
 
-        for data in os.listdir(class_folder):
+        img = image.load_img(
+            image_path, target_size=(img_height, img_width))
+        x = image.img_to_array(img)
+        x = np.expand_dims(x, axis=0)
+        class_image_data.append(x)
 
-            image_path = class_folder + '/' + data
+    # add true class index as many times as there are test data for that
+    # class
+    true_classes.extend([i] * len(class_image_data))
 
-            img = image.load_img(
-                image_path, target_size=(img_height, img_width))
-            x = image.img_to_array(img)
-            x = np.expand_dims(x, axis=0)
-            class_image_data.append(x)
+    # stack arrays vertically
+    array_row = np.vstack(class_image_data)
 
-        # add true class index as many times as there are test data for that
-        # class
-        true_classes.extend([i] * len(class_image_data))
+    # predicted class
+    predicted_class = model.predict_classes(array_row, batch_size=20)
+    predicted_classes.extend(predicted_class)
 
-        # stack arrays vertically
-        array_row = np.vstack(class_image_data)
+cm = confusion_matrix(true_classes, predicted_classes)
+plt.figure("Confusion matrix")
+plot_confusion_matrix(cm, class_labels[l_idx])
+plt.savefig(FIGURES_DIR + '/' +
+            'confusion_matrix_' + matrix_name + '.jpg')
+plt.clf()
+plt.clf()
+plt.close()
+# plt.show()
 
-        # predicted class
-        predicted_class = model.predict_classes(array_row, batch_size=20)
-        predicted_classes.extend(predicted_class)
+# ------ real data predict
 
-    cm = confusion_matrix(true_classes, predicted_classes)
-    plt.figure("Confusion matrix")
-    plot_confusion_matrix(cm, class_labels[l_idx])
-    plt.savefig(FIGURES_DIR + data_model + '/' +
-                'confusion_matrix_' + matrix_name + '.jpg')
-    plt.clf()
-    plt.clf()
-    plt.close()
-    # plt.show()
+from settings import REAL_DATA_FILTER_SPEC
 
-    # ------ real data predict
+file = open(model_name + '_' + '.txt', 'a+')
 
-    from settings import REAL_DATA_FILTER_SPEC
+test_batches = test_datagen.flow_from_directory(
+    REAL_DATA_FILTER_SPEC,
+    target_size=(img_height, img_width),
+    color_mode='rgb',
+    batch_size=batch_size,
+    class_mode='categorical'
+)
 
-    file = open(model_name + '_' + data_model + '.txt', 'a+')
+true_classes = []
+predicted_classes = []
 
-    test_batches = test_datagen.flow_from_directory(
-        REAL_DATA_FILTER_SPEC,
-        target_size=(img_height, img_width),
-        color_mode='rgb',
-        batch_size=batch_size,
-        class_mode='categorical'
-    )
+folders = os.listdir(REAL_DATA_FILTER_SPEC + '/')
+folders.sort()
 
-    true_classes = []
-    predicted_classes = []
+for i, folder in enumerate(folders):
 
-    folders = os.listdir(REAL_DATA_FILTER_SPEC + data_model + '/')
-    folders.sort()
+    class_folder = REAL_DATA_FILTER_SPEC + '/' + folder
+    class_image_data = []
 
-    for i, folder in enumerate(folders):
+    files_sorted = os.listdir(class_folder)
+    files_sorted = natural_sort(files_sorted)
+    for data in files_sorted:
 
-        class_folder = REAL_DATA_FILTER_SPEC + data_model + '/' + folder
-        class_image_data = []
+        image_path = class_folder + '/' + data
 
-        files_sorted = os.listdir(class_folder)
-        files_sorted = natural_sort(files_sorted)
-        for data in files_sorted:
+        img = image.load_img(
+            image_path, target_size=(img_height, img_width))
+        x = image.img_to_array(img)
+        x = np.expand_dims(x, axis=0)
+        class_image_data.append(x)
 
-            image_path = class_folder + '/' + data
+    # stack arrays vertically
+    array_row = np.vstack(class_image_data)
 
-            img = image.load_img(
-                image_path, target_size=(img_height, img_width))
-            x = image.img_to_array(img)
-            x = np.expand_dims(x, axis=0)
-            class_image_data.append(x)
-
-        # stack arrays vertically
-        array_row = np.vstack(class_image_data)
-
-        # predicted class
-        predicted_class = model.predict_classes(array_row, batch_size=20)
-        save_list_to_file(file, predicted_class, folder)
-    file.close()
+    # predicted class
+    predicted_class = model.predict_classes(array_row, batch_size=20)
+    save_list_to_file(file, predicted_class, folder)
+file.close()

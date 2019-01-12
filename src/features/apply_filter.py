@@ -16,26 +16,21 @@ clear_dir(FILTER_SPECTROGRAM_DIR)
 
 foreground = Image.open(FILTER_DIR + 'filter2.png').convert('RGBA')
 
-models_folders = listdir(SPECTROGRAM_PATH)
-models_folders.sort()
+images_folders = listdir(SPECTROGRAM_PATH + '/')
+images_folders.sort()
 
-for model in models_folders:
+for folder in images_folders:
+    folder_files = listdir(SPECTROGRAM_PATH + '/' + folder + '/')
 
-    images_folders = listdir(SPECTROGRAM_PATH + model + '/')
-    images_folders.sort()
+    create_directory(FILTER_SPECTROGRAM_DIR + '/' + folder + '/')
+    for image in folder_files:
 
-    for folder in images_folders:
-        folder_files = listdir(SPECTROGRAM_PATH + model + '/' + folder + '/')
+        background = Image.open(
+            SPECTROGRAM_PATH + '/' + folder + '/' + image
+        ).convert('RGBA')
 
-        create_directory(FILTER_SPECTROGRAM_DIR + model + '/' + folder + '/')
-        for image in folder_files:
-
-            background = Image.open(
-                SPECTROGRAM_PATH + model + '/' + folder + '/' + image
-            ).convert('RGBA')
-
-            background.paste(foreground, (0, 0), foreground)
-            background.save(
-                FILTER_SPECTROGRAM_DIR + model + '/' +
-                folder + '/' + image[:-4] + '+filter.png'
-            )
+        background.paste(foreground, (0, 0), foreground)
+        background.save(
+            FILTER_SPECTROGRAM_DIR + '/' +
+            folder + '/' + image[:-4] + '+filter.png'
+        )

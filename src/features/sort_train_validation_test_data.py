@@ -15,16 +15,16 @@ clear_dir(VALIDATION_DIR)
 clear_dir(TEST_DIR)
 
 
-def copy_data_files(folder_files, model, folder, destination_folder=None, training_volume=0.8):
+def copy_data_files(folder_files, folder, destination_folder=None, training_volume=0.8):
     validation_volume = 0.1
 
-    copy_source_path = FILTER_SPECTROGRAM_DIR + model + '/' + folder + '/'
+    copy_source_path = FILTER_SPECTROGRAM_DIR + '/' + folder + '/'
     if not destination_folder:
         destination_folder = folder
 
-    create_directory(TRAINING_DIR + model + '/' + destination_folder + '/')
-    create_directory(VALIDATION_DIR + model + '/' + destination_folder + '/')
-    create_directory(TEST_DIR + model + '/' + destination_folder + '/')
+    create_directory(TRAINING_DIR + '/' + destination_folder + '/')
+    create_directory(VALIDATION_DIR + '/' + destination_folder + '/')
+    create_directory(TEST_DIR + '/' + destination_folder + '/')
 
     train_split_index = int(training_volume * len(folder_files))
     test_split_index = int(
@@ -35,21 +35,21 @@ def copy_data_files(folder_files, model, folder, destination_folder=None, traini
     for filename in training_files:
         copy2(
             copy_source_path + filename,
-            TRAINING_DIR + model + '/' + destination_folder + '/' + filename
+            TRAINING_DIR + '/' + destination_folder + '/' + filename
         )
 
     validation_files = folder_files[train_split_index:test_split_index]
     for filename in validation_files:
         copy2(
             copy_source_path + filename,
-            VALIDATION_DIR + model + '/' + destination_folder + '/' + filename
+            VALIDATION_DIR + '/' + destination_folder + '/' + filename
         )
 
     test_files = folder_files[test_split_index:]
     for filename in test_files:
         copy2(
             copy_source_path + filename,
-            TEST_DIR + model + '/' + destination_folder + '/' + filename
+            TEST_DIR + '/' + destination_folder + '/' + filename
         )
 
 
@@ -60,57 +60,20 @@ FOREIGN_SOPILA_NUM = int(NUMBER_PER_TONE / 6 / 4)
 folders = listdir(FILTER_SPECTROGRAM_DIR)
 folders.sort()
 
+model_folder = listdir(FILTER_SPECTROGRAM_DIR + '/')
 
-models_folders = listdir(FILTER_SPECTROGRAM_DIR)
-models_folders.sort()
+for folder in model_folder:
+    folder_files = listdir(FILTER_SPECTROGRAM_DIR + '/' + folder + '/')
 
-all_files_per_model = {}
+    # randomize data
+    for i in range(100):
+        shuffle(folder_files)
 
-for model in models_folders:
+    if not 'silence' in folder:
+        folder_files = folder_files[:NUMBER_PER_TONE]
 
-    model_folder = listdir(FILTER_SPECTROGRAM_DIR + model + '/')
-    model_folder.sort()
-
-    all_files_per_model[model] = {}
-
-    for folder in model_folder:
-
-        folder_files = listdir(FILTER_SPECTROGRAM_DIR +
-                               model + '/' + folder + '/')
-
-        # randomize data
-        for i in range(100):
-            shuffle(folder_files)
-
-        if not 'silence' in folder:
-            folder_files = folder_files[:NUMBER_PER_TONE]
-            # sopila tones to insert as class in opposite model (ex. m in v)
-            all_files_per_model[model][
-                folder] = folder_files[:FOREIGN_SOPILA_NUM]
-
-        copy_data_files(
-            folder_files,
-            model,
-            folder,
-            training_volume=0.8
-        )
-
-# if other is turned on
-if len(sys.argv) > 1:
-    # add opposite model in model data
-    # m in v and opposite
-    for folder, files in all_files_per_model['v'].items():
-        copy_data_files(
-            files,
-            'v',
-            folder,
-            'v_other'
-        )
-
-    for folder, files in all_files_per_model['m'].items():
-        copy_data_files(
-            files,
-            'm',
-            folder,
-            'm_other'
-        )
+    copy_data_files(
+        folder_files,
+        folder,
+        training_volume=0.8
+    )

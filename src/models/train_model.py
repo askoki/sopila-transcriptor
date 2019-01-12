@@ -9,14 +9,10 @@ from model import get_model
 from keras.preprocessing.image import ImageDataGenerator
 
 
-# number of classes required argument
+# -------- required arguments --------
 num_classes = int(sys.argv[1])
-
-data_name = 'default_name'
-# provide name
-if len(sys.argv) > 2:
-    data_name = str(sys.argv[2])
-
+data_name = str(sys.argv[2])
+# ------------------------------------
 batch_size = 50
 epochs = 12
 
@@ -24,91 +20,86 @@ epochs = 12
 img_rows, img_cols = 480, 20
 input_shape = (img_rows, img_cols, 3)
 
+train_datagen = ImageDataGenerator(
+    rescale=1. / 255,
+    featurewise_std_normalization=True,
+    horizontal_flip=False
+)
 
-data_models = os.listdir(TRAINING_DIR)
+val_datagen = ImageDataGenerator(rescale=1. / 255)
 
-for data_model in data_models:
+train_generator = train_datagen.flow_from_directory(
+    TRAINING_DIR + '/',
+    target_size=(img_rows, img_cols),
+    color_mode='rgb',
+    batch_size=batch_size,
+    class_mode='categorical',
+    shuffle=True
+)
 
-    train_datagen = ImageDataGenerator(
-        rescale=1. / 255,
-        featurewise_std_normalization=True,
-        horizontal_flip=False
-    )
+validation_generator = val_datagen.flow_from_directory(
+    VALIDATION_DIR + '/',
+    target_size=(img_rows, img_cols),
+    color_mode='rgb',
+    # classes=class_labels
+    batch_size=batch_size,
+    class_mode='categorical',
+    shuffle=True
+)
 
-    val_datagen = ImageDataGenerator(rescale=1. / 255)
+model = get_model(input_shape, num_classes)
 
-    train_generator = train_datagen.flow_from_directory(
-        TRAINING_DIR + data_model + '/',
-        target_size=(img_rows, img_cols),
-        color_mode='rgb',
-        batch_size=batch_size,
-        class_mode='categorical',
-        shuffle=True
-    )
+model.compile(
+    loss=keras.losses.categorical_crossentropy,
+    optimizer=keras.optimizers.Adadelta(),
+    metrics=['accuracy']
+)
 
-    validation_generator = val_datagen.flow_from_directory(
-        VALIDATION_DIR + data_model + '/',
-        target_size=(img_rows, img_cols),
-        color_mode='rgb',
-        # classes=class_labels
-        batch_size=batch_size,
-        class_mode='categorical',
-        shuffle=True
-    )
+history = model.fit_generator(
+    train_generator,
+    steps_per_epoch=batch_size,
+    epochs=epochs,
+    verbose=1,
+    validation_data=validation_generator,
+    validation_steps=batch_size,
+    callbacks=[
+        keras.callbacks.EarlyStopping(
+            monitor='val_loss', min_delta=0.00001
+        )
+    ]
+)
 
-    model = get_model(input_shape, num_classes)
+# list all data in history
+print(history.history.keys())
 
-    model.compile(
-        loss=keras.losses.categorical_crossentropy,
-        optimizer=keras.optimizers.Adadelta(),
-        metrics=['accuracy']
-    )
+# summarize history for accuracy
+plt.figure('Accuracy')
+plt.plot(history.history['acc'])
+plt.plot(history.history['val_acc'])
+plt.title('model accuracy')
+plt.ylabel('accuracy')
+plt.xlabel('epoch')
+plt.legend(['train', 'validation'], loc='upper left')
+# plt.show()
+plt.savefig(FIGURES_DIR + '/' + 'accuracy_' + data_name + '.jpg')
+plt.clf()
 
-    history = model.fit_generator(
-        train_generator,
-        steps_per_epoch=batch_size,
-        epochs=epochs,
-        verbose=1,
-        validation_data=validation_generator,
-        validation_steps=batch_size,
-        callbacks=[
-            keras.callbacks.EarlyStopping(
-                monitor='val_loss', min_delta=0.00001
-            )
-        ]
-    )
+# summarize history for loss
+plt.figure('Loss')
+plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
+plt.title('model loss')
+plt.ylabel('loss')
+plt.xlabel('epoch')
+plt.legend(['train', 'validation'], loc='upper left')
+# plt.show()
+plt.savefig(FIGURES_DIR + '/' + 'loss_' + data_name + '.jpg')
 
-    # list all data in history
-    print(history.history.keys())
+# serialize model to JSON
+model_json = model.to_json()
+with open(MODEL_DIR + '/' + 'model_' + data_name + '.json', 'w') as json_file:
+    json_file.write(model_json)
 
-    # summarize history for accuracy
-    plt.figure('Accuracy')
-    plt.plot(history.history['acc'])
-    plt.plot(history.history['val_acc'])
-    plt.title('model accuracy')
-    plt.ylabel('accuracy')
-    plt.xlabel('epoch')
-    plt.legend(['train', 'validation'], loc='upper left')
-    # plt.show()
-    plt.savefig(FIGURES_DIR + data_model + '/' + 'accuracy_' + data_name + '.jpg')
-    plt.clf()
-
-    # summarize history for loss
-    plt.figure('Loss')
-    plt.plot(history.history['loss'])
-    plt.plot(history.history['val_loss'])
-    plt.title('model loss')
-    plt.ylabel('loss')
-    plt.xlabel('epoch')
-    plt.legend(['train', 'validation'], loc='upper left')
-    # plt.show()
-    plt.savefig(FIGURES_DIR + data_model + '/' + 'loss_' + data_name + '.jpg')
-
-    # serialize model to JSON
-    model_json = model.to_json()
-    with open(MODEL_DIR + data_model + '/' + 'model_' + data_name + '.json', 'w') as json_file:
-        json_file.write(model_json)
-
-    # serialize weights to HDF5
-    model.save_weights(MODEL_DIR + data_model + '/' + 'model_' + data_name + '.h5')
-    print('Saved model to disk')
+# serialize weights to HDF5
+model.save_weights(MODEL_DIR + '/' + 'model_' + data_name + '.h5')
+print('Saved model to disk')

@@ -8,7 +8,7 @@ from os import listdir
 
 # pass number of ms in a timeframe (10, 20, 25, 50)
 if not len(sys.argv) > 1:
-    step = 25
+    step = 10
 else:
     step = int(sys.argv[1])
 
@@ -20,38 +20,33 @@ else:
 
 clear_dir(CUT_DIR)
 
-models_folders = listdir(RAW_DATA_DIR)
-models_folders.sort()
+recordings_folders = listdir(RAW_DATA_DIR + '/')
+recordings_folders.sort()
 
-for model in models_folders:
+for folder in recordings_folders:
 
-    recordings_folders = listdir(RAW_DATA_DIR + model + '/')
-    recordings_folders.sort()
+    folder_files = listdir(RAW_DATA_DIR + '/' + folder + '/')
 
-    for folder in recordings_folders:
+    create_directory(CUT_DIR + '/' + folder + '/')
 
-        folder_files = listdir(RAW_DATA_DIR + model + '/' + folder + '/')
+    numeration = 0
+    for file in folder_files:
+        start = 0
+        # in miliseconds
+        title = str(step) + "ms"
 
-        create_directory(CUT_DIR + model + '/' + folder + '/')
+        audioFile = AudioSegment.from_wav(
+            RAW_DATA_DIR + '/' + folder + '/' + file)
 
-        numeration = 0
-        for file in folder_files:
-            start = 0
-            # in miliseconds
-            title = str(step) + "ms"
+        # measured in miliseconds
+        duration = len(audioFile)
+        number_of_segments = int(duration / step)
 
-            audioFile = AudioSegment.from_wav(
-                RAW_DATA_DIR + model + '/' + folder + '/' + file)
-
-            # measured in miliseconds
-            duration = len(audioFile)
-            number_of_segments = int(duration / step)
-
-            for i in range(0, number_of_segments):
-                end = start + step
-                newAudio = audioFile[start:end]
-                filepath = CUT_DIR + model + '/' + folder + \
-                    '/' + title + str(numeration) + '.wav'
-                newAudio.export(filepath, format="wav")
-                start += step
-                numeration += 1
+        for i in range(0, number_of_segments):
+            end = start + step
+            newAudio = audioFile[start:end]
+            filepath = CUT_DIR + '/' + folder + \
+                '/' + title + str(numeration) + '.wav'
+            newAudio.export(filepath, format="wav")
+            start += step
+            numeration += 1
