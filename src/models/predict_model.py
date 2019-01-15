@@ -137,7 +137,7 @@ for i, folder in enumerate(folders):
 
 cm = confusion_matrix(true_classes, predicted_classes)
 plt.figure("Confusion matrix")
-plot_confusion_matrix(cm, class_labels[l_idx])
+plot_confusion_matrix(cm, class_labels)
 plt.savefig(FIGURES_DIR + '/' +
             'confusion_matrix_' + matrix_name + '.jpg')
 plt.clf()

@@ -32,8 +32,7 @@ create_directories(directories_to_create)
 # delete contents of raw folder
 clear_dir(RAW_DATA_DIR)
 
-
-FILE_ID = '1fbEQWYy_R-tBg7q7t7KMErOXIzWy6AdY'
+FILE_ID = '1UK37zLWz6bH6RirLNmvN847RkDzdXbYh'
 gdd.download_file_from_google_drive(
     file_id=FILE_ID,
     dest_path=RAW_DATA_DIR + 'data.zip',

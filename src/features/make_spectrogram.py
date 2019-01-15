@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+# !/usr/bin/env python
 import os
 import sys
 sys.path.insert(1, os.path.join(sys.path[0], '../..'))
@@ -63,6 +63,12 @@ for folder in recordings_folders:
 
         # all values below threshold are set to 0 db
         dBS[dBS < CUTOFF_THRESHOLD_DB] = 0
+
+        # if array of segment times is less then 1 (that happens in case of 10ms)
+        # then hardcode values in order to plot spectrogram with pcolormesh
+        # pcolormesh requires that t has at least 2 values
+        if len(t) <= 1:
+            t = np.array([0.00290249, 0.00798186])
 
         plt.pcolormesh(t, f, dBS)
         plt.ylim(0, 3000)
