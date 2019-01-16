@@ -13,28 +13,29 @@ else:
     from settings import SPECTROGRAM_PATH, FILTER_SPECTROGRAM_DIR
 
 def apply_filter_to_folder(folder):
-    folder_files = listdir(SPECTROGRAM_PATH + '/' + folder + '/')
+    folder_files = listdir(os.path.join(SPECTROGRAM_PATH, folder))
 
-    create_directory(FILTER_SPECTROGRAM_DIR + '/' + folder + '/')
+    create_directory(os.path.join(FILTER_SPECTROGRAM_DIR, folder))
     for image in folder_files:
 
         background = Image.open(
-            SPECTROGRAM_PATH + '/' + folder + '/' + image
+            os.path.join(SPECTROGRAM_PATH, folder, image)
         ).convert('RGBA')
 
         background.paste(foreground, (0, 0), foreground)
         background.save(
-            FILTER_SPECTROGRAM_DIR + '/' +
-            folder + '/' + image[:-4] + '+filter.png'
+            os.path.join(
+                FILTER_SPECTROGRAM_DIR, folder, image[:-4] + '+filter.png'
+            )
         )
 
 
 # delete old filter spectrogram data (if exists)
 clear_dir(FILTER_SPECTROGRAM_DIR)
 
-foreground = Image.open(FILTER_DIR + 'filter2.png').convert('RGBA')
+foreground = Image.open(os.path.join(FILTER_DIR, 'filter2.png')).convert('RGBA')
 
-images_folders = listdir(SPECTROGRAM_PATH + '/')
+images_folders = listdir(os.path.join(SPECTROGRAM_PATH))
 images_folders.sort()
 
 # -------- PARALLELIZE ----------

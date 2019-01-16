@@ -41,3 +41,4 @@ def get_secret(setting, secrets=secrets):
         err = "Set the %s in secrets.json file." % setting
 
 NUMBER_OF_CORES = get_secret("NUMBER_OF_CORES")
+USE_GPU = get_secret("USE_GPU")

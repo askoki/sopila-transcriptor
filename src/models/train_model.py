@@ -2,12 +2,21 @@ import os
 import sys
 sys.path.insert(1, os.path.join(sys.path[0], '../..'))
 
-from settings import TRAINING_DIR, VALIDATION_DIR, MODEL_DIR, FIGURES_DIR
+from settings import TRAINING_DIR, VALIDATION_DIR, MODEL_DIR, FIGURES_DIR, \
+    USE_GPU
 import keras
 import matplotlib.pyplot as plt
 from model import get_model
 from keras.preprocessing.image import ImageDataGenerator
 
+if USE_GPU:
+    # use if you are running on a PC with many GPU-s
+    # needs to be at the beginning of the file
+    os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+    # the GPU id to use, usually either "0" or "1"
+    os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+    # just disables the warning, doesn't enable AVX/FMA
+    os.environ['TF_CPP_MIN_LOG_LEVEL'] = "2"
 
 # -------- required arguments --------
 num_classes = int(sys.argv[1])

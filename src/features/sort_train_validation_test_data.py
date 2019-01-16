@@ -18,13 +18,13 @@ clear_dir(TEST_DIR)
 def copy_data_files(folder_files, folder, destination_folder=None, training_volume=0.8):
     validation_volume = 0.1
 
-    copy_source_path = FILTER_SPECTROGRAM_DIR + '/' + folder + '/'
+    copy_source_path = os.path.join(FILTER_SPECTROGRAM_DIR, folder)
     if not destination_folder:
         destination_folder = folder
 
-    create_directory(TRAINING_DIR + '/' + destination_folder + '/')
-    create_directory(VALIDATION_DIR + '/' + destination_folder + '/')
-    create_directory(TEST_DIR + '/' + destination_folder + '/')
+    create_directory(os.path.join(TRAINING_DIR, destination_folder))
+    create_directory(os.path.join(VALIDATION_DIR, destination_folder))
+    create_directory(os.path.join(TEST_DIR, destination_folder))
 
     train_split_index = int(training_volume * len(folder_files))
     test_split_index = int(
@@ -35,21 +35,21 @@ def copy_data_files(folder_files, folder, destination_folder=None, training_volu
     for filename in training_files:
         copy2(
             copy_source_path + filename,
-            TRAINING_DIR + '/' + destination_folder + '/' + filename
+            os.path.join(TRAINING_DIR, destination_folder, filename)
         )
 
     validation_files = folder_files[train_split_index:test_split_index]
     for filename in validation_files:
         copy2(
             copy_source_path + filename,
-            VALIDATION_DIR + '/' + destination_folder + '/' + filename
+            os.path.join(VALIDATION_DIR, destination_folder, filename)
         )
 
     test_files = folder_files[test_split_index:]
     for filename in test_files:
         copy2(
             copy_source_path + filename,
-            TEST_DIR + '/' + destination_folder + '/' + filename
+            os.path.join(TEST_DIR, destination_folder, filename)
         )
 
 
@@ -60,10 +60,10 @@ FOREIGN_SOPILA_NUM = int(NUMBER_PER_TONE / 6 / 4)
 folders = listdir(FILTER_SPECTROGRAM_DIR)
 folders.sort()
 
-model_folder = listdir(FILTER_SPECTROGRAM_DIR + '/')
+model_folder = listdir(os.path.join(FILTER_SPECTROGRAM_DIR ))
 
 for folder in model_folder:
-    folder_files = listdir(FILTER_SPECTROGRAM_DIR + '/' + folder + '/')
+    folder_files = listdir(os.path.join(FILTER_SPECTROGRAM_DIR, folder))
 
     # randomize data
     for i in range(100):

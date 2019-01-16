@@ -21,8 +21,8 @@ else:
 
 
 def cut_folder_files(folder):
-    folder_files = listdir(RAW_DATA_DIR + '/' + folder + '/')
-    create_directory(CUT_DIR + '/' + folder + '/')
+    folder_files = listdir(os.path.join(RAW_DATA_DIR, folder))
+    create_directory(os.path.join(CUT_DIR, folder))
 
     numeration = 0
     for file in folder_files:
@@ -31,7 +31,7 @@ def cut_folder_files(folder):
         title = str(step) + "ms"
 
         audioFile = AudioSegment.from_wav(
-            RAW_DATA_DIR + '/' + folder + '/' + file
+            os.path.join(RAW_DATA_DIR, folder, file)
         )
 
         # measured in miliseconds
@@ -41,15 +41,16 @@ def cut_folder_files(folder):
         for i in range(0, number_of_segments):
             end = start + step
             newAudio = audioFile[start:end]
-            filepath = CUT_DIR + '/' + folder + \
-                '/' + title + str(numeration) + '.wav'
+            filepath = os.path.join(
+                CUT_DIR, folder, title + str(numeration) + '.wav'
+            )
             newAudio.export(filepath, format="wav")
             start += step
             numeration += 1
 
-clear_dir(CUT_DIR)
+clear_dir(os.path.join(CUT_DIR))
 
-recordings_folders = listdir(RAW_DATA_DIR + '/')
+recordings_folders = listdir(os.path.join(RAW_DATA_DIR))
 recordings_folders.sort()
 
 # -------- PARALLELIZE ----------

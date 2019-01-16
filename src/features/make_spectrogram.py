@@ -22,17 +22,17 @@ import pylab
 
 
 def create_folder_spectrograms(folder):
-    folder_files = listdir(CUT_DIR + '/' + folder + '/')
-    create_directory(SPECTROGRAM_PATH + '/' + folder + '/')
+    folder_files = listdir(os.path.join(CUT_DIR, folder))
+    create_directory(os.path.join(SPECTROGRAM_PATH, folder))
 
     number_of_images = len(folder_files)
     for i, file in enumerate(folder_files):
         # print progress
         print('\rFolder: %s %d/%d\r' % (folder, i, number_of_images))
+
         # read in a wav file
-        sample_rate, data = wavfile.read(
-            CUT_DIR + '/' + folder + '/' + file
-        )
+        sample_rate, data = wavfile.read(os.path.join(CUT_DIR, folder, file))
+
         # mono wav file
         samples = data.shape[0]
 
@@ -68,16 +68,14 @@ def create_folder_spectrograms(folder):
         # remove .wav
         image_name = file[:-4]
 
-        plt.savefig(
-            SPECTROGRAM_PATH + '/' +
-            folder + '/' + file[:-4] + '.jpg'
-        )
+        plt.savefig(os.path.join(SPECTROGRAM_PATH, folder, file[:-4] + '.jpg'))
+
         plt.close()
 
 # delete old spectrogram data (if exists)
 clear_dir(SPECTROGRAM_PATH)
 
-recordings_folders = listdir(CUT_DIR + '/')
+recordings_folders = listdir(os.path.join(CUT_DIR))
 recordings_folders.sort()
 
 # -------- PARALLELIZE ----------
