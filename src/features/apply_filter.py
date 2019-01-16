@@ -42,7 +42,6 @@ images_folders.sort()
 from multiprocessing import Pool
 
 if __name__ == '__main__':
-    for folder in images_folders:
-        with Pool(processes=NUMBER_OF_CORES) as pool:
-            pool.map(apply_filter_to_folder, folder)
+    with Pool(processes=NUMBER_OF_CORES) as pool:
+        pool.map(apply_filter_to_folder, images_folders)
 

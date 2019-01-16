@@ -29,7 +29,6 @@ def cut_folder_files(folder):
         start = 0
         # in miliseconds
         title = str(step) + "ms"
-
         audioFile = AudioSegment.from_wav(
             os.path.join(RAW_DATA_DIR, folder, file)
         )
@@ -57,6 +56,5 @@ recordings_folders.sort()
 from multiprocessing import Pool
 
 if __name__ == '__main__':
-    for folder in recordings_folders:
-        with Pool(processes=NUMBER_OF_CORES) as pool:
-            pool.map(cut_folder_files, folder)
+    with Pool(processes=NUMBER_OF_CORES) as pool:
+        pool.map(cut_folder_files, recordings_folders)

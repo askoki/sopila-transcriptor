@@ -82,8 +82,7 @@ recordings_folders.sort()
 from multiprocessing import Pool
 
 if __name__ == '__main__':
-    for folder in recordings_folders:
-        with Pool(processes=NUMBER_OF_CORES) as pool:
-            pool.map(create_folder_spectrograms, folder)
+    with Pool(processes=NUMBER_OF_CORES) as pool:
+        pool.map(create_folder_spectrograms, recordings_folders)
 
 
