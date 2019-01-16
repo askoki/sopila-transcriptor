@@ -36,7 +36,8 @@ for folder in recordings_folders:
         title = str(step) + "ms"
 
         audioFile = AudioSegment.from_wav(
-            RAW_DATA_DIR + '/' + folder + '/' + file)
+            RAW_DATA_DIR + '/' + folder + '/' + file
+        )
 
         # measured in miliseconds
         duration = len(audioFile)
