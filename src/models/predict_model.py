@@ -68,7 +68,11 @@ def plot_confusion_matrix(cm, classes,
 
 def save_list_to_file(file, predicted_list, filename):
     file.write('\n#' + filename + '\n')
-    file.write(str(predicted_list))
+    list_to_string = '['
+    for line in predicted_list:
+        list_to_string += str(line) + ' '
+    list_to_string = list_to_string[:-1] + ']'
+    file.write(list_to_string)
 
 # dimensions of our images
 img_height, img_width = 480, 20
@@ -137,9 +141,9 @@ for i, folder in enumerate(folders):
 
 cm = confusion_matrix(true_classes, predicted_classes)
 plt.figure("Confusion matrix")
-plot_confusion_matrix(cm, class_labels)
-plt.savefig(FIGURES_DIR + '/' +
-            'confusion_matrix_' + matrix_name + '.jpg')
+# plot_confusion_matrix(cm, class_labels)
+# plt.savefig(FIGURES_DIR + '/' +
+            # 'confusion_matrix_' + matrix_name + '.jpg')
 plt.clf()
 plt.clf()
 plt.close()
@@ -147,9 +151,13 @@ plt.close()
 
 # ------ real data predict
 
-from settings import REAL_DATA_FILTER_SPEC
+from settings import REAL_DATA_FILTER_SPEC, REAL_DATA_FILES_DIR
 
-file = open(model_name + '_' + '.txt', 'a+')
+# create new file with same name
+file = open(REAL_DATA_FILES_DIR + '/' + model_name + '.txt', 'w')
+file.close()
+# open file in append mode
+file = open(REAL_DATA_FILES_DIR + '/' + model_name + '.txt', 'a+')
 
 test_batches = test_datagen.flow_from_directory(
     REAL_DATA_FILTER_SPEC,

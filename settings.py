@@ -27,3 +27,5 @@ REAL_DATA_CUT = os.path.join(REAL_DATA_DIR, 'cut/')
 REAL_DATA_RAW = os.path.join(REAL_DATA_DIR, 'raw/')
 REAL_DATA_SPEC = os.path.join(REAL_DATA_DIR, 'spec/')
 REAL_DATA_FILTER_SPEC = os.path.join(REAL_DATA_DIR, 'spec+filter/')
+
+REAL_DATA_FILES_DIR = os.path.join(ROOT_DIR, 'notebooks/1.0-results/alternative_data')
