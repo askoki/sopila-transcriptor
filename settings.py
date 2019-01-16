@@ -1,4 +1,5 @@
 import os
+import json
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -29,3 +30,14 @@ REAL_DATA_SPEC = os.path.join(REAL_DATA_DIR, 'spec/')
 REAL_DATA_FILTER_SPEC = os.path.join(REAL_DATA_DIR, 'spec+filter/')
 
 REAL_DATA_FILES_DIR = os.path.join(ROOT_DIR, 'notebooks/1.0-results/alternative_data')
+
+with open(os.path.join(ROOT_DIR, 'secrets.json')) as f:
+    secrets = json.loads(f.read())
+
+def get_secret(setting, secrets=secrets):
+    try:
+        return secrets[setting]
+    except KeyError:
+        err = "Set the %s in secrets.json file." % setting
+
+NUMBER_OF_CORES = get_secret("NUMBER_OF_CORES")

@@ -16,8 +16,8 @@ import numpy as np
 num_classes = int(sys.argv[1])
 
 # provide model name
-model_name = str(sys.argv[2])
-matrix_name = sys.argv[3]
+model_name = str(sys.argv[2]) + '_tloss'
+matrix_name = sys.argv[3] + '_tloss'
 
 
 def natural_sort(l):
@@ -141,9 +141,9 @@ for i, folder in enumerate(folders):
 
 cm = confusion_matrix(true_classes, predicted_classes)
 plt.figure("Confusion matrix")
-# plot_confusion_matrix(cm, class_labels)
-# plt.savefig(FIGURES_DIR + '/' +
-            # 'confusion_matrix_' + matrix_name + '.jpg')
+plot_confusion_matrix(cm, class_labels)
+plt.savefig(FIGURES_DIR + '/' +
+            'confusion_matrix_' + matrix_name + '.jpg')
 plt.clf()
 plt.clf()
 plt.close()

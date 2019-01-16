@@ -4,6 +4,7 @@ sys.path.insert(1, os.path.join(sys.path[0], '../..'))
 
 from helpers.file_helpers import create_directory, clear_dir
 from pydub import AudioSegment
+from settings import NUMBER_OF_CORES
 from os import listdir
 
 # pass number of ms in a timeframe (10, 20, 25, 50)
@@ -18,15 +19,9 @@ if len(sys.argv) > 2:
 else:
     from settings import RAW_DATA_DIR, CUT_DIR
 
-clear_dir(CUT_DIR)
 
-recordings_folders = listdir(RAW_DATA_DIR + '/')
-recordings_folders.sort()
-
-for folder in recordings_folders:
-
+def cut_folder_files(folder):
     folder_files = listdir(RAW_DATA_DIR + '/' + folder + '/')
-
     create_directory(CUT_DIR + '/' + folder + '/')
 
     numeration = 0
@@ -51,3 +46,16 @@ for folder in recordings_folders:
             newAudio.export(filepath, format="wav")
             start += step
             numeration += 1
+
+clear_dir(CUT_DIR)
+
+recordings_folders = listdir(RAW_DATA_DIR + '/')
+recordings_folders.sort()
+
+# -------- PARALLELIZE ----------
+from multiprocessing import Pool
+
+if __name__ == '__main__':
+    for folder in recordings_folders:
+        with Pool(processes=NUMBER_OF_CORES) as pool:
+            pool.map(cut_folder_files, folder)

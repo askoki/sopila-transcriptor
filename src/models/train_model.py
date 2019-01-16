@@ -11,7 +11,7 @@ from keras.preprocessing.image import ImageDataGenerator
 
 # -------- required arguments --------
 num_classes = int(sys.argv[1])
-data_name = str(sys.argv[2])
+data_name = str(sys.argv[2]) + '_tloss'
 # ------------------------------------
 batch_size = 50
 epochs = 12
@@ -64,7 +64,7 @@ history = model.fit_generator(
     validation_steps=batch_size,
     callbacks=[
         keras.callbacks.EarlyStopping(
-            monitor='val_loss', min_delta=0.00001
+            monitor='train_loss', min_delta=0.00001
         )
     ]
 )

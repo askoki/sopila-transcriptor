@@ -7,6 +7,7 @@ from helpers.file_helpers import create_directory, clear_dir
 from scipy.signal import stft, spectrogram
 from scipy.io import wavfile
 from os import listdir
+from settings import NUMBER_OF_CORES
 
 # alternative dir
 if len(sys.argv) > 1:
@@ -19,17 +20,8 @@ import numpy as np
 import wave
 import pylab
 
-# delete old spectrogram data (if exists)
-clear_dir(SPECTROGRAM_PATH)
 
-# remove hidden files
-# recordings_folders = [f for f in listdir(CUT_DIR) if not f.startswith('.')]
-
-recordings_folders = listdir(CUT_DIR + '/')
-recordings_folders.sort()
-
-for folder in recordings_folders:
-
+def create_folder_spectrograms(folder):
     folder_files = listdir(CUT_DIR + '/' + folder + '/')
     create_directory(SPECTROGRAM_PATH + '/' + folder + '/')
 
@@ -81,3 +73,19 @@ for folder in recordings_folders:
             folder + '/' + file[:-4] + '.jpg'
         )
         plt.close()
+
+# delete old spectrogram data (if exists)
+clear_dir(SPECTROGRAM_PATH)
+
+recordings_folders = listdir(CUT_DIR + '/')
+recordings_folders.sort()
+
+# -------- PARALLELIZE ----------
+from multiprocessing import Pool
+
+if __name__ == '__main__':
+    for folder in recordings_folders:
+        with Pool(processes=NUMBER_OF_CORES) as pool:
+            pool.map(create_folder_spectrograms, folder)
+
+
