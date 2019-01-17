@@ -40,6 +40,7 @@ def cut_folder_files(folder):
         for i in range(0, number_of_segments):
             end = start + step
             newAudio = audioFile[start:end]
+
             filepath = os.path.join(
                 CUT_DIR, folder, title + str(numeration) + '.wav'
             )
@@ -47,14 +48,13 @@ def cut_folder_files(folder):
             start += step
             numeration += 1
 
-clear_dir(os.path.join(CUT_DIR))
-
-recordings_folders = listdir(os.path.join(RAW_DATA_DIR))
-recordings_folders.sort()
-
 # -------- PARALLELIZE ----------
 from multiprocessing import Pool
 
 if __name__ == '__main__':
+    clear_dir(os.path.join(CUT_DIR))
+
+    recordings_folders = listdir(os.path.join(RAW_DATA_DIR))
+    recordings_folders.sort()
     with Pool(processes=NUMBER_OF_CORES) as pool:
         pool.map(cut_folder_files, recordings_folders)

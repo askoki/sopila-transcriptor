@@ -12,6 +12,7 @@ if len(sys.argv) > 1:
 else:
     from settings import SPECTROGRAM_PATH, FILTER_SPECTROGRAM_DIR
 
+
 def apply_filter_to_folder(folder):
     folder_files = listdir(os.path.join(SPECTROGRAM_PATH, folder))
 
@@ -30,18 +31,16 @@ def apply_filter_to_folder(folder):
         )
 
 
-# delete old filter spectrogram data (if exists)
-clear_dir(FILTER_SPECTROGRAM_DIR)
-
-foreground = Image.open(os.path.join(FILTER_DIR, 'filter2.png')).convert('RGBA')
-
-images_folders = listdir(os.path.join(SPECTROGRAM_PATH))
-images_folders.sort()
-
 # -------- PARALLELIZE ----------
 from multiprocessing import Pool
 
 if __name__ == '__main__':
+    # delete old filter spectrogram data (if exists)
+    clear_dir(FILTER_SPECTROGRAM_DIR)
+
+    foreground = Image.open(os.path.join(FILTER_DIR, 'filter2.png')).convert('RGBA')
+
+    images_folders = listdir(os.path.join(SPECTROGRAM_PATH))
+    images_folders.sort()
     with Pool(processes=NUMBER_OF_CORES) as pool:
         pool.map(apply_filter_to_folder, images_folders)
-

@@ -72,16 +72,16 @@ def create_folder_spectrograms(folder):
 
         plt.close()
 
-# delete old spectrogram data (if exists)
-clear_dir(SPECTROGRAM_PATH)
-
-recordings_folders = listdir(os.path.join(CUT_DIR))
-recordings_folders.sort()
 
 # -------- PARALLELIZE ----------
 from multiprocessing import Pool
 
 if __name__ == '__main__':
+    # delete old spectrogram data (if exists)
+    clear_dir(SPECTROGRAM_PATH)
+
+    recordings_folders = listdir(os.path.join(CUT_DIR))
+    recordings_folders.sort()
     with Pool(processes=NUMBER_OF_CORES) as pool:
         pool.map(create_folder_spectrograms, recordings_folders)
 
