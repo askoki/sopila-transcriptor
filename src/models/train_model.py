@@ -14,7 +14,7 @@ if USE_GPU:
     # needs to be at the beginning of the file
     os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
     # the GPU id to use, usually either "0" or "1"
-    os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+    os.environ["CUDA_VISIBLE_DEVICES"] = "1"
     # just disables the warning, doesn't enable AVX/FMA
     os.environ['TF_CPP_MIN_LOG_LEVEL'] = "2"
 
