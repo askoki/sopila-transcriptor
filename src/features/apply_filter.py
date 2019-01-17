@@ -1,6 +1,6 @@
 import os
 import sys
-sys.path.insert(1, os.path.join(sys.path[0], '../..'))
+sys.path.insert(1, os.path.join(sys.path[0], '..', '..'))
 
 from settings import FILTER_DIR
 from helpers.file_helpers import create_directory, clear_dir

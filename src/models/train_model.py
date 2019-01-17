@@ -1,6 +1,6 @@
 import os
 import sys
-sys.path.insert(1, os.path.join(sys.path[0], '../..'))
+sys.path.insert(1, os.path.join(sys.path[0], '..', '..'))
 
 from settings import TRAINING_DIR, VALIDATION_DIR, MODEL_DIR, FIGURES_DIR, \
     USE_GPU
@@ -38,7 +38,7 @@ train_datagen = ImageDataGenerator(
 val_datagen = ImageDataGenerator(rescale=1. / 255)
 
 train_generator = train_datagen.flow_from_directory(
-    TRAINING_DIR + '/',
+    os.path.join(TRAINING_DIR),
     target_size=(img_rows, img_cols),
     color_mode='rgb',
     batch_size=batch_size,
@@ -47,7 +47,7 @@ train_generator = train_datagen.flow_from_directory(
 )
 
 validation_generator = val_datagen.flow_from_directory(
-    VALIDATION_DIR + '/',
+    os.path.join(VALIDATION_DIR),
     target_size=(img_rows, img_cols),
     color_mode='rgb',
     # classes=class_labels
@@ -90,7 +90,7 @@ plt.ylabel('accuracy')
 plt.xlabel('epoch')
 plt.legend(['train', 'validation'], loc='upper left')
 # plt.show()
-plt.savefig(FIGURES_DIR + '/' + 'accuracy_' + data_name + '.jpg')
+plt.savefig(os.path.join(FIGURES_DIR, 'accuracy_' + data_name + '.jpg'))
 plt.clf()
 
 # summarize history for loss
@@ -102,13 +102,13 @@ plt.ylabel('loss')
 plt.xlabel('epoch')
 plt.legend(['train', 'validation'], loc='upper left')
 # plt.show()
-plt.savefig(FIGURES_DIR + '/' + 'loss_' + data_name + '.jpg')
+plt.savefig(os.path.join(FIGURES_DIR, 'loss_' + data_name + '.jpg'))
 
 # serialize model to JSON
 model_json = model.to_json()
-with open(MODEL_DIR + '/' + 'model_' + data_name + '.json', 'w') as json_file:
+with open(os.path.join(MODEL_DIR, 'model_' + data_name + '.json'), 'w') as json_file:
     json_file.write(model_json)
 
 # serialize weights to HDF5
-model.save_weights(MODEL_DIR + '/' + 'model_' + data_name + '.h5')
+model.save_weights(os.path.join(MODEL_DIR, 'model_' + data_name + '.h5'))
 print('Saved model to disk')

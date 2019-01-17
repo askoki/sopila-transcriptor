@@ -2,8 +2,8 @@
 import os
 import sys
 import subprocess
-sys.path.insert(1, os.path.join(sys.path[0], '../..'))
-sys.path.insert(1, os.path.join(sys.path[0], '../features'))
+sys.path.insert(1, os.path.join(sys.path[0], '..', '..'))
+sys.path.insert(1, os.path.join(sys.path[0], '..', 'features'))
 
 
 from google_drive_downloader import GoogleDriveDownloader as gdd
@@ -36,7 +36,7 @@ clear_dir(RAW_DATA_DIR)
 FILE_ID = '1UK37zLWz6bH6RirLNmvN847RkDzdXbYh'
 gdd.download_file_from_google_drive(
     file_id=FILE_ID,
-    dest_path=RAW_DATA_DIR + 'data.zip',
+    dest_path=os.path.join(RAW_DATA_DIR, 'data.zip'),
     unzip=True
 )
 
