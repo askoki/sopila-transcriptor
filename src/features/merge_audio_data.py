@@ -46,12 +46,12 @@ def merge_audio_files(file1, file2, export_dirname):
     else:
         combined = file2.overlay(file1)
 
-    export_dir = os.path.join(RAW_DATA_DIR, export_dirname)
-    create_directory(export_dir)
-    clear_dir(export_dir)
     # v__ is added in order to put mixed recordings after single ones
     # but before silence
-    combined.export(os.path.join(export_dir, 'v__' + export_dirname + '.wav'), format='wav')
+    export_dir = os.path.join(RAW_DATA_DIR, 'v__' + export_dirname)
+    create_directory(export_dir)
+    clear_dir(export_dir)
+    combined.export(os.path.join(export_dir, export_dirname + '.wav'), format='wav')
 
 mala_dirs = get_sopila_dirs('m')
 vela_dirs = get_sopila_dirs('v')
