@@ -1,6 +1,6 @@
 import os
 import sys
-sys.path.insert(1, os.path.join(sys.path[0], '../..'))
+sys.path.insert(1, os.path.join(sys.path[0], '..', '..'))
 
 from settings import MODEL_DIR, FIGURES_DIR, TEST_DIR, FILTER_SPECTROGRAM_DIR
 from keras.preprocessing import image
@@ -57,9 +57,12 @@ def plot_confusion_matrix(cm, classes,
     fmt = '.2f' if normalize else 'd'
     thresh = cm.max() / 2.
     for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
-        plt.text(j, i, format(cm[i, j], fmt),
-                 horizontalalignment="center",
-                 color="white" if cm[i, j] > thresh else "black")
+        plt.text(
+            j, i,
+            format(cm[i, j], fmt),
+            horizontalalignment="center",
+            color="white" if cm[i, j] > thresh else "black"
+        )
 
     plt.ylabel('True label')
     plt.xlabel('Predicted label')
@@ -92,7 +95,7 @@ class_labels = [
 model = get_model(input_shape, num_classes)
 
 # load the model we saved
-model.load_weights(MODEL_DIR + '/' + model_name + '.h5')
+model.load_weights(os.path.join(MODEL_DIR, model_name + '.h5'))
 model.compile(
     loss=keras.losses.categorical_crossentropy,
     optimizer=keras.optimizers.Adadelta(),
@@ -100,7 +103,7 @@ model.compile(
 )
 
 test_batches = test_datagen.flow_from_directory(
-    TEST_DIR + '/',
+    os.path.join(TEST_DIR),
     target_size=(img_height, img_width),
     color_mode='rgb',
     batch_size=batch_size,
@@ -110,17 +113,17 @@ test_batches = test_datagen.flow_from_directory(
 true_classes = []
 predicted_classes = []
 
-folders = os.listdir(TEST_DIR + '/')
+folders = os.listdir(os.path.join(TEST_DIR))
 folders = natural_sort(folders)
 
 for i, folder in enumerate(folders):
 
-    class_folder = TEST_DIR + '/' + folder
+    class_folder = os.path.join(TEST_DIR, folder)
     class_image_data = []
 
     for data in os.listdir(class_folder):
 
-        image_path = class_folder + '/' + data
+        image_path = os.path.join(class_folder, data)
 
         img = image.load_img(
             image_path, target_size=(img_height, img_width))
@@ -142,22 +145,22 @@ for i, folder in enumerate(folders):
 cm = confusion_matrix(true_classes, predicted_classes)
 plt.figure("Confusion matrix")
 plot_confusion_matrix(cm, class_labels)
-plt.savefig(FIGURES_DIR + '/' +
-            'confusion_matrix_' + matrix_name + '.jpg')
+plt.savefig(
+    os.path.join(FIGURES_DIR, 'confusion_matrix_' + matrix_name + '.jpg')
+)
 plt.clf()
 plt.clf()
 plt.close()
-# plt.show()
 
 # ------ real data predict
 
 from settings import REAL_DATA_FILTER_SPEC, REAL_DATA_FILES_DIR
 
 # create new file with same name
-file = open(REAL_DATA_FILES_DIR + '/' + model_name + '.txt', 'w')
+file = open(os.path.join(REAL_DATA_FILES_DIR, model_name + '.txt'), 'w')
 file.close()
 # open file in append mode
-file = open(REAL_DATA_FILES_DIR + '/' + model_name + '.txt', 'a+')
+file = open(os.path.join(REAL_DATA_FILES_DIR, model_name + '.txt'), 'a+')
 
 test_batches = test_datagen.flow_from_directory(
     REAL_DATA_FILTER_SPEC,
@@ -170,12 +173,12 @@ test_batches = test_datagen.flow_from_directory(
 true_classes = []
 predicted_classes = []
 
-folders = os.listdir(REAL_DATA_FILTER_SPEC + '/')
+folders = os.listdir(os.path.join(REAL_DATA_FILTER_SPEC))
 folders.sort()
 
 for i, folder in enumerate(folders):
 
-    class_folder = REAL_DATA_FILTER_SPEC + '/' + folder
+    class_folder = os.path.join(REAL_DATA_FILTER_SPEC, folder)
     class_image_data = []
 
     files_sorted = os.listdir(class_folder)

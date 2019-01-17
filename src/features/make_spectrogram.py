@@ -1,7 +1,7 @@
 # !/usr/bin/env python
 import os
 import sys
-sys.path.insert(1, os.path.join(sys.path[0], '../..'))
+sys.path.insert(1, os.path.join(sys.path[0], '..', '..'))
 
 from helpers.file_helpers import create_directory, clear_dir
 from scipy.signal import stft, spectrogram
