@@ -48,7 +48,7 @@ def merge_audio_files(file1, file2, export_dirname):
 
     # v__ is added in order to put mixed recordings after single ones
     # but before silence
-    export_dir = os.path.join(RAW_DATA_DIR, 'v__' + export_dirname)
+    export_dir = os.path.join(RAW_DATA_DIR, 'vv_' + export_dirname)
     create_directory(export_dir)
     clear_dir(export_dir)
     combined.export(os.path.join(export_dir, export_dirname + '.wav'), format='wav')
