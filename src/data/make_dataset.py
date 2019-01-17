@@ -41,7 +41,7 @@ gdd.download_file_from_google_drive(
 )
 
 print("Removing downloaded zip file ...")
-os.remove(RAW_DATA_DIR + 'data.zip')
+os.remove(os.path.join(RAW_DATA_DIR, 'data.zip'))
 
 subprocess.call(
     ['python', 'merge_audio_data.py'],

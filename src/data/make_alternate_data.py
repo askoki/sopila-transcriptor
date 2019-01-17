@@ -35,4 +35,4 @@ gdd.download_file_from_google_drive(
 )
 
 print("Removing downloaded zip file ...")
-os.remove(REAL_DATA_RAW + 'data.zip')
+os.remove(os.path.join(REAL_DATA_RAW, 'data.zip'))
