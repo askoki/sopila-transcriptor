@@ -34,21 +34,21 @@ def copy_data_files(folder_files, folder, destination_folder=None, training_volu
     training_files = folder_files[:train_split_index]
     for filename in training_files:
         copy2(
-            copy_source_path + filename,
+            os.path.join(copy_source_path, filename),
             os.path.join(TRAINING_DIR, destination_folder, filename)
         )
 
     validation_files = folder_files[train_split_index:test_split_index]
     for filename in validation_files:
         copy2(
-            copy_source_path + filename,
+            os.path.join(copy_source_path, filename),
             os.path.join(VALIDATION_DIR, destination_folder, filename)
         )
 
     test_files = folder_files[test_split_index:]
     for filename in test_files:
         copy2(
-            copy_source_path + filename,
+            os.path.join(copy_source_path, filename),
             os.path.join(TEST_DIR, destination_folder, filename)
         )
 

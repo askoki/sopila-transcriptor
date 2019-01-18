@@ -46,7 +46,12 @@ def plot_confusion_matrix(cm, classes,
         print('Confusion matrix, without normalization')
 
     print(cm)
-
+    
+    # Create Figure and Axes instances
+    fig = plt.figure(frameon=False)
+    # 20 x 480 pixels
+    fig.set_size_inches(20, 20)
+    
     plt.imshow(cm, interpolation='nearest', cmap=cmap)
     plt.title(title)
     plt.colorbar()
@@ -86,10 +91,7 @@ test_datagen = image.ImageDataGenerator(rescale=1. / 255)
 batch_size = 50
 
 
-class_labels = [
-    'm0', 'm1', 'm2', 'm3', 'm4', 'm5',
-    'v0', 'v1', 'v2', 'v3', 'v4', 'v5', 'blank',
-]
+class_labels = os.listdir(TEST_DIR)
 
 # model must be the same as trained
 model = get_model(input_shape, num_classes)
@@ -149,54 +151,53 @@ plt.savefig(
     os.path.join(FIGURES_DIR, 'confusion_matrix_' + matrix_name + '.jpg')
 )
 plt.clf()
-plt.clf()
 plt.close()
 
 # ------ real data predict
 
-from settings import REAL_DATA_FILTER_SPEC, REAL_DATA_FILES_DIR
-
-# create new file with same name
-file = open(os.path.join(REAL_DATA_FILES_DIR, model_name + '.txt'), 'w')
-file.close()
-# open file in append mode
-file = open(os.path.join(REAL_DATA_FILES_DIR, model_name + '.txt'), 'a+')
-
-test_batches = test_datagen.flow_from_directory(
-    REAL_DATA_FILTER_SPEC,
-    target_size=(img_height, img_width),
-    color_mode='rgb',
-    batch_size=batch_size,
-    class_mode='categorical'
-)
-
-true_classes = []
-predicted_classes = []
-
-folders = os.listdir(os.path.join(REAL_DATA_FILTER_SPEC))
-folders.sort()
-
-for i, folder in enumerate(folders):
-
-    class_folder = os.path.join(REAL_DATA_FILTER_SPEC, folder)
-    class_image_data = []
-
-    files_sorted = os.listdir(class_folder)
-    files_sorted = natural_sort(files_sorted)
-    for data in files_sorted:
-
-        image_path = class_folder + '/' + data
-
-        img = image.load_img(
-            image_path, target_size=(img_height, img_width))
-        x = image.img_to_array(img)
-        x = np.expand_dims(x, axis=0)
-        class_image_data.append(x)
-
-    # stack arrays vertically
-    array_row = np.vstack(class_image_data)
-
-    # predicted class
-    predicted_class = model.predict_classes(array_row, batch_size=20)
-    save_list_to_file(file, predicted_class, folder)
-file.close()
+#from settings import REAL_DATA_FILTER_SPEC, REAL_DATA_FILES_DIR
+#
+## create new file with same name
+#file = open(os.path.join(REAL_DATA_FILES_DIR, model_name + '.txt'), 'w')
+#file.close()
+## open file in append mode
+#file = open(os.path.join(REAL_DATA_FILES_DIR, model_name + '.txt'), 'a+')
+#
+#test_batches = test_datagen.flow_from_directory(
+#    REAL_DATA_FILTER_SPEC,
+#    target_size=(img_height, img_width),
+#    color_mode='rgb',
+#    batch_size=batch_size,
+#    class_mode='categorical'
+#)
+#
+#true_classes = []
+#predicted_classes = []
+#
+#folders = os.listdir(os.path.join(REAL_DATA_FILTER_SPEC))
+#folders.sort()
+#
+#for i, folder in enumerate(folders):
+#
+#    class_folder = os.path.join(REAL_DATA_FILTER_SPEC, folder)
+#    class_image_data = []
+#
+#    files_sorted = os.listdir(class_folder)
+#    files_sorted = natural_sort(files_sorted)
+#    for data in files_sorted:
+#
+#        image_path = class_folder + '/' + data
+#
+#        img = image.load_img(
+#            image_path, target_size=(img_height, img_width))
+#        x = image.img_to_array(img)
+#        x = np.expand_dims(x, axis=0)
+#        class_image_data.append(x)
+#
+#    # stack arrays vertically
+#    array_row = np.vstack(class_image_data)
+#
+#    # predicted class
+#    predicted_class = model.predict_classes(array_row, batch_size=20)
+#    save_list_to_file(file, predicted_class, folder)
+#file.close()
