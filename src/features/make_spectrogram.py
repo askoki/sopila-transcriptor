@@ -4,7 +4,7 @@ import sys
 sys.path.insert(1, os.path.join(sys.path[0], '..', '..'))
 
 from helpers.file_helpers import create_directory, clear_dir
-from scipy.signal import stft, spectrogram
+from scipy.signal import spectrogram
 from scipy.io import wavfile
 from os import listdir
 from settings import NUMBER_OF_CORES
@@ -16,6 +16,7 @@ else:
     from settings import CUT_DIR, SPECTROGRAM_PATH
 
 import matplotlib.pyplot as plt
+from matplotlib.colors import Normalize
 import numpy as np
 import wave
 import pylab
@@ -62,14 +63,13 @@ def create_folder_spectrograms(folder):
         if len(t) <= 1:
             t = np.array([0.00290249, 0.00798186])
 
-        plt.pcolormesh(t, f, dBS)
+        plt.pcolormesh(t, f, dBS, norm=Normalize(vmin=0))
         plt.ylim(0, 3000)
 
         # remove .wav
         image_name = file[:-4]
 
-        plt.savefig(os.path.join(SPECTROGRAM_PATH, folder, file[:-4] + '.jpg'))
-
+        plt.savefig(os.path.join(SPECTROGRAM_PATH, folder, image_name + '.jpg'))
         plt.close()
 
 
@@ -84,5 +84,3 @@ if __name__ == '__main__':
     recordings_folders.sort()
     with Pool(processes=NUMBER_OF_CORES) as pool:
         pool.map(create_folder_spectrograms, recordings_folders)
-
-
