@@ -40,18 +40,25 @@ def merge_audio_files(file1, file2, export_dirname):
     '''
     file1, file2 -> must be objects of AudioSegment
     '''
-    # if one file is shorter than oder then just cut off at shorter length
-    if file1.duration_seconds < file2.duration_seconds:
-        combined = file1.overlay(file2)
+    
+    is_bigger = lambda s1, s2: True if s1.duration_seconds > s2.duration_seconds else False
+    
+    if is_bigger(file1, file2):
+        file1 = file1[:len(file2)]
+        # needed in order to be the same length for stereo mapping
+        file2 = file2[:len(file2)]
     else:
-        combined = file2.overlay(file1)
+        file2 = file2[:len(file1)]
+        file1 = file1[:len(file1)]
+    
+    stereo_sound = AudioSegment.from_mono_audiosegments(file1, file2)
 
     # v__ is added in order to put mixed recordings after single ones
     # but before silence
     export_dir = os.path.join(RAW_DATA_DIR, 'vv_' + export_dirname)
     create_directory(export_dir)
     clear_dir(export_dir)
-    combined.export(os.path.join(export_dir, export_dirname + '.wav'), format='wav')
+    stereo_sound.export(os.path.join(export_dir, export_dirname + '.wav'), format='wav')
 
 mala_dirs = get_sopila_dirs('m')
 vela_dirs = get_sopila_dirs('v')
