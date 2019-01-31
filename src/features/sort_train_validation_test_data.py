@@ -3,7 +3,7 @@ import sys
 sys.path.insert(1, os.path.join(sys.path[0], '..', '..'))
 
 from settings import TRAINING_DIR, TEST_DIR, FILTER_SPECTROGRAM_DIR, \
-    VALIDATION_DIR
+    VALIDATION_DIR, SPECTROGRAM_PATH
 from helpers.file_helpers import create_directory, clear_dir
 from os import listdir
 from shutil import copy2
@@ -13,6 +13,11 @@ import sys
 clear_dir(TRAINING_DIR)
 clear_dir(VALIDATION_DIR)
 clear_dir(TEST_DIR)
+
+if len(sys.argv) > 1:
+    # if no_filter is set to true than data is extracted from spectrogram folder
+    no_filter = bool(sys.argv[1])
+    FILTER_SPECTROGRAM_DIR = SPECTROGRAM_PATH if no_filter else FILTER_SPECTROGRAM_DIR
 
 
 def copy_data_files(folder_files, folder, destination_folder=None, training_volume=0.8):
@@ -60,7 +65,7 @@ FOREIGN_SOPILA_NUM = int(NUMBER_PER_TONE / 6 / 4)
 folders = listdir(FILTER_SPECTROGRAM_DIR)
 folders.sort()
 
-model_folder = listdir(os.path.join(FILTER_SPECTROGRAM_DIR ))
+model_folder = listdir(os.path.join(FILTER_SPECTROGRAM_DIR))
 
 for folder in model_folder:
     folder_files = listdir(os.path.join(FILTER_SPECTROGRAM_DIR, folder))
