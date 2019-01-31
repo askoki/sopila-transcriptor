@@ -15,6 +15,7 @@ if len(sys.argv) > 1:
 else:
     from settings import CUT_DIR, SPECTROGRAM_PATH
 
+from matplotlib.colors import Normalize
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -26,7 +27,7 @@ def convert_to_dB_and_normalize(Sxx):
     CUTOFF_THRESHOLD_DB = 25
     # all values below threshold are set to 0 db
     dBS[dBS < CUTOFF_THRESHOLD_DB] = 0
-    return dBS / dBS.max()
+    return dBS
 
 
 def create_folder_spectrograms(folder):
@@ -51,30 +52,11 @@ def create_folder_spectrograms(folder):
         ax.set_axis_off()
         fig.add_axes(ax)
         
-         # if stereo (combined data)
-        if data.channels > 1:
-            left, right = data.split_to_mono()
-            # left channel
-            f, t, Sxx = spectrogram(
-                np.array(left.get_array_of_samples()), 
-                left.frame_rate
-            )
-            dBS = convert_to_dB_and_normalize(Sxx)
-            
-            f2, t2, Sxx2 = spectrogram(
-                np.array(right.get_array_of_samples()),
-                right.frame_rate
-            )
-            dBS2 = convert_to_dB_and_normalize(Sxx2)
-            
-            np.append(f, f2)
-            np.append(dBS, dBS2)
-        else:
-            f, t, Sxx = spectrogram(
-                np.array(data.get_array_of_samples()), 
-                data.frame_rate
-            )
-            dBS = convert_to_dB_and_normalize(Sxx)
+        f, t, Sxx = spectrogram(
+            np.array(data.get_array_of_samples()), 
+            data.frame_rate
+        )
+        dBS = convert_to_dB_and_normalize(Sxx)
 
         # if array of segment times is less then 1 (that happens in case of 10ms)
         # then hardcode values in order to plot spectrogram with pcolormesh
@@ -82,7 +64,7 @@ def create_folder_spectrograms(folder):
         if len(t) <= 1:
             t = np.array([0.00290249, 0.00798186])
 
-        plt.pcolormesh(t, f, dBS)
+        plt.pcolormesh(t, f, dBS, norm=Normalize(vmin=0))
         plt.ylim(0, 3000)
 
         # remove .wav
