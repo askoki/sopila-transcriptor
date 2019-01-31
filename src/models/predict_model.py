@@ -7,7 +7,7 @@ from settings import MODEL_DIR, TEST_DIR, FILTER_SPECTROGRAM_DIR
 
 from model import get_model
 from features.helpers.file_helpers import save_list_to_file
-from features.helpers.file_helpers import save_list_to_file
+from features.helpers.data_helpers import natural_sort, plot_confusion_matrix
 
 import matplotlib.pyplot as plt
 from keras.preprocessing import image

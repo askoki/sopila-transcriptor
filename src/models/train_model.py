@@ -1,12 +1,14 @@
 import os
 import sys
-sys.path.insert(1, os.path.join(sys.path[0], '..', '..'))
+sys.path.insert(0, os.path.join(sys.path[0], '..', '..'))
+sys.path.insert(1, os.path.join(sys.path[0], '..',))
 
 from settings import TRAINING_DIR, VALIDATION_DIR, MODEL_DIR, FIGURES_DIR, \
     USE_GPU
 import keras
 import matplotlib.pyplot as plt
 from model import get_model
+from features.helpers.data_helpers import plot_model_statistics
 from keras.preprocessing.image import ImageDataGenerator
 
 if USE_GPU:
