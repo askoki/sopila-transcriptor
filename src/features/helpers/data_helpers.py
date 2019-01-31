@@ -7,7 +7,6 @@ import re
 import itertools
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.metrics import confusion_matrix
 
 
 def natural_sort(l):
@@ -19,11 +18,12 @@ def natural_sort(l):
     return sorted(l, key=alphanum_key)
 
 
-def plot_model_statistics(title, train, valid):
+def plot_model_statistics(title, train, valid, data_name):
     '''
     title -> string reporesenting figure title
     train -> list of keras values during n epoch on the training set
     valid -> list of keras values during n epoch on the validation set
+    data_name -> string describing title
     '''
     # summarize history for accuracy
     plt.figure(title.capitalize())
@@ -41,7 +41,7 @@ def plot_model_statistics(title, train, valid):
     plt.close()
 
 
-def plot_confusion_matrix(cm, classes, normalize=False, title='', cmap=plt.cm.Blues):
+def plot_confusion_matrix(cm, classes, matrix_name, normalize=False, title='', cmap=plt.cm.Blues):
     """
     This function prints and plots the confusion matrix.
     Normalization can be applied by setting `normalize=True`.

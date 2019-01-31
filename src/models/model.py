@@ -2,6 +2,7 @@ from keras.models import Sequential
 from keras.layers import Dense, Dropout, Flatten
 from keras.layers import Conv2D, MaxPooling2D
 
+
 def get_model(input_shape, num_classes):
     '''
     return keras model (used in training and prediction)

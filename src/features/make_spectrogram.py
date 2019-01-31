@@ -5,6 +5,7 @@ sys.path.insert(1, os.path.join(sys.path[0], '..', '..'))
 
 from helpers.file_helpers import create_directory, clear_dir
 from scipy.signal import spectrogram
+from pydub import AudioSegment
 from os import listdir
 from settings import NUMBER_OF_CORES
 
@@ -71,7 +72,7 @@ def create_folder_spectrograms(folder):
         # remove .wav
         image_name = file[:-4]
 
-        plt.savefig(os.path.join(SPECTROGRAM_PATH, folder, file[:-4] + '.jpg'))
+        plt.savefig(os.path.join(SPECTROGRAM_PATH, folder, image_name + '.jpg'))
         plt.close()
 
 

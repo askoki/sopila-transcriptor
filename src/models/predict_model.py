@@ -1,15 +1,15 @@
 import os
 import sys
-sys.path.insert(0, os.path.join(sys.path[0], '..', '..'))
+sys.path.insert(1, os.path.join(sys.path[0], '..', '..'))
 sys.path.insert(1, os.path.join(sys.path[0], '..'))
 
-from settings import MODEL_DIR, TEST_DIR, FILTER_SPECTROGRAM_DIR
+from settings import MODEL_DIR, TEST_DIR
 
 from model import get_model
 from features.helpers.file_helpers import save_list_to_file
 from features.helpers.data_helpers import natural_sort, plot_confusion_matrix
+from sklearn.metrics import confusion_matrix
 
-import matplotlib.pyplot as plt
 from keras.preprocessing import image
 import keras
 import numpy as np
@@ -86,7 +86,7 @@ for i, folder in enumerate(folders):
     predicted_classes.extend(predicted_class)
 
 cm = confusion_matrix(true_classes, predicted_classes)
-plot_confusion_matrix(cm, class_labels)
+plot_confusion_matrix(cm, class_labels, matrix_name)
 
 # ------ real data predict
 

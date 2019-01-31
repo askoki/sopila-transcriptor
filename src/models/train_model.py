@@ -1,12 +1,10 @@
 import os
 import sys
-sys.path.insert(0, os.path.join(sys.path[0], '..', '..'))
+sys.path.insert(1, os.path.join(sys.path[0], '..', '..'))
 sys.path.insert(1, os.path.join(sys.path[0], '..',))
 
-from settings import TRAINING_DIR, VALIDATION_DIR, MODEL_DIR, FIGURES_DIR, \
-    USE_GPU
+from settings import TRAINING_DIR, VALIDATION_DIR, MODEL_DIR, USE_GPU
 import keras
-import matplotlib.pyplot as plt
 from model import get_model
 from features.helpers.data_helpers import plot_model_statistics
 from keras.preprocessing.image import ImageDataGenerator
@@ -87,14 +85,16 @@ print(history.history.keys())
 plot_model_statistics(
     'accuracy',
     history.history['acc'],
-    history.history['val_acc']
+    history.history['val_acc'],
+    data_name
 )
 
 # summarize history for loss
 plot_model_statistics(
     'loss',
     history.history['loss'],
-    history.history['val_loss']
+    history.history['val_loss'],
+    data_name
 )
 
 # serialize model to JSON
