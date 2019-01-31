@@ -82,27 +82,18 @@ history = model.fit_generator(
 print(history.history.keys())
 
 # summarize history for accuracy
-plt.figure('Accuracy')
-plt.plot(history.history['acc'])
-plt.plot(history.history['val_acc'])
-plt.title('model accuracy')
-plt.ylabel('accuracy')
-plt.xlabel('epoch')
-plt.legend(['train', 'validation'], loc='upper left')
-# plt.show()
-plt.savefig(os.path.join(FIGURES_DIR, 'accuracy_' + data_name + '.jpg'))
-plt.clf()
+plot_model_statistics(
+    'accuracy',
+    history.history['acc'],
+    history.history['val_acc']
+)
 
 # summarize history for loss
-plt.figure('Loss')
-plt.plot(history.history['loss'])
-plt.plot(history.history['val_loss'])
-plt.title('model loss')
-plt.ylabel('loss')
-plt.xlabel('epoch')
-plt.legend(['train', 'validation'], loc='upper left')
-# plt.show()
-plt.savefig(os.path.join(FIGURES_DIR, 'loss_' + data_name + '.jpg'))
+plot_model_statistics(
+    'loss',
+    history.history['loss'],
+    history.history['val_loss']
+)
 
 # serialize model to JSON
 model_json = model.to_json()

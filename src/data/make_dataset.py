@@ -3,7 +3,6 @@ import os
 import sys
 import subprocess
 sys.path.insert(1, os.path.join(sys.path[0], '..', '..'))
-sys.path.insert(1, os.path.join(sys.path[0], '..', 'features'))
 
 
 from google_drive_downloader import GoogleDriveDownloader as gdd
@@ -42,8 +41,3 @@ gdd.download_file_from_google_drive(
 
 print("Removing downloaded zip file ...")
 os.remove(os.path.join(RAW_DATA_DIR, 'data.zip'))
-
-subprocess.call(
-    ['python', 'merge_audio_data.py'],
-    cwd="../features/"
-)
