@@ -27,6 +27,7 @@ if len(sys.argv) < 2:
 else:
     model_name = int(sys.argv[1])
 
+
 x_train, x_test, y_train, y_test = get_train_and_test_data()
 
 # Kreiranje random forest klasifikatora
@@ -42,7 +43,3 @@ dump(rnd_clf, os.path.join(MODEL_DIR, model_name + '.joblib'))
 
 print(rnd_clf.score(X=x_train, y=y_train))
 print(rnd_clf.score(X=x_test, y=y_test))
-
-
-
-
