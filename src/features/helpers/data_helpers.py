@@ -1,10 +1,11 @@
 import os
 import sys
 sys.path.insert(0, os.path.join(sys.path[0], '..', '..'))
-from settings import FIGURES_DIR
+from settings import FIGURES_DIR, AMPLITUDE_ARRAY_PATH, PROCESSED_DATA_DIR
 
 import re
 import itertools
+import h5py
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -84,3 +85,31 @@ def plot_confusion_matrix(cm, classes, matrix_name, normalize=False, title='', c
         dpi=300
     )
     plt.close()
+
+
+def get_random_forest_data():
+    '''
+    Returns tuple containing list of all amlitudes (X) and all_labels (y)
+    '''
+    all_amplitudes = []
+    all_labels = []
+    for array_file in os.listdir(AMPLITUDE_ARRAY_PATH):
+        file = h5py.File(os.path.join(AMPLITUDE_ARRAY_PATH, array_file), 'r')
+        # m * n matrix
+        all_amplitudes.extend(file['amplitudes'].value)
+        # m * 1 vector
+        all_labels.extend(file['labels'].value)
+        file.close()
+
+    return (all_amplitudes, all_labels)
+
+
+def get_train_and_test_data():
+    file = h5py.File(os.path.join(PROCESSED_DATA_DIR, 'processed_data.hdf5'), 'r')
+
+    return (
+        file['x_train'].value,
+        file['x_test'].value,
+        file['y_train'].value,
+        file['y_test'].value
+    )
