@@ -1,6 +1,7 @@
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Flatten
-from keras.layers import Conv2D, MaxPooling2D
+from keras.layers import Conv1D, MaxPooling1D
+
 
 def get_model(input_shape, num_classes):
     '''
@@ -9,15 +10,15 @@ def get_model(input_shape, num_classes):
     num_classes -> integer containing number of classes
     '''
     model = Sequential()
-    model.add(Conv2D(
+    model.add(Conv1D(
         32,
-        kernel_size=(3, 3),
+        kernel_size=10,
         activation='relu',
         input_shape=input_shape
     ))
 
-    model.add(Conv2D(64, (3, 3), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(Conv1D(64, 10, activation='relu'))
+    model.add(MaxPooling1D(3))
     model.add(Dropout(0.25))
     model.add(Flatten())
     model.add(Dense(128, activation='relu'))
