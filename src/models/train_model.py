@@ -6,9 +6,10 @@ sys.path.insert(1, os.path.join(sys.path[0], '..',))
 # from joblib import dump, load
 from joblib import dump
 import pandas as pd
-from settings import MODEL_DIR, USE_GPU
+from settings import MODEL_DIR, USE_GPU, MODEL_DIR
+from joblib import load
 from features.helpers.data_helpers import plot_model_statistics, \
-    get_train_and_test_data
+    get_train_data, get_test_data
 import datetime
 
 from sklearn.ensemble import RandomForestClassifier
@@ -23,15 +24,20 @@ if USE_GPU:
     os.environ['TF_CPP_MIN_LOG_LEVEL'] = "2"
 
 if len(sys.argv) < 2:
-    model_name = 'random_forest_default_name'
+    model_name = 'silece_lower_random_forest_default_name'
 else:
     model_name = int(sys.argv[1])
 
 
-x_train, x_test, y_train, y_test = get_train_and_test_data()
+x_train, y_train = get_train_data()
 
 # Kreiranje random forest klasifikatora
-rnd_clf = RandomForestClassifier(n_estimators=500, criterion='gini', n_jobs=-1)
+rnd_clf = RandomForestClassifier(
+    n_estimators=100,
+    criterion='gini',
+    n_jobs=-1,
+    verbose=2,
+)
 
 # Treniranje i predviđanje modela
 print('Before:')
@@ -41,5 +47,12 @@ print('After:')
 print(datetime.datetime.now())
 dump(rnd_clf, os.path.join(MODEL_DIR, model_name + '.joblib'))
 
-print(rnd_clf.score(X=x_train, y=y_train))
-print(rnd_clf.score(X=x_test, y=y_test))
+x_test, y_test = get_test_data()
+
+train_accuracy = rnd_clf.score(X=x_train, y=y_train)
+test_accuracy = rnd_clf.score(X=x_test, y=y_test)
+
+plot_model_statistics('accuracy', train_accuracy, test_accuracy, model_name)
+
+print(train_accuracy)
+print(test_accuracy)

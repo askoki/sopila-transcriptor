@@ -19,7 +19,7 @@ def natural_sort(l):
     return sorted(l, key=alphanum_key)
 
 
-def plot_model_statistics(title, train, valid, data_name):
+def plot_model_statistics(title, train_score, test_score, data_name):
     '''
     title -> string reporesenting figure title
     train -> list of keras values during n epoch on the training set
@@ -28,17 +28,38 @@ def plot_model_statistics(title, train, valid, data_name):
     '''
     # summarize history for accuracy
     plt.figure(title.capitalize())
-    plt.plot(train)
-    plt.plot(valid)
+    plt.bar([0, 1], [train_score, test_score])
+    plt.xticks([0, 1], ('train', 'test'))
     plt.title('model %s' % (title.lower()))
-    plt.ylabel(title.lower())
-    plt.xlabel('epoch')
+    plt.ylim(0, 1)
 
-    plt.legend(['train', 'validation'], loc='upper left')
+    train_label = "%.4g%%" % (train_score * 100)
+    plt.text(
+        0,
+        0.5,
+        train_label,
+        fontweight='bold',
+        horizontalalignment='center',
+        verticalalignment='center'
+    )
 
-    img_name = title.lower() + '_' + data_name + '.png'
+    test_label = "%.4g%%" % (test_score * 100)
+    plt.text(
+        1,
+        0.5,
+        test_label,
+        fontweight='bold',
+        horizontalalignment='center',
+        verticalalignment='center'
+    )
 
-    plt.savefig(os.path.join(FIGURES_DIR, img_name), format='png', dpi=300)
+    img_name = 'train_test_' + title.lower() + '_' + data_name + '.png'
+
+    plt.savefig(
+        os.path.join(FIGURES_DIR, img_name),
+        format='png',
+        dpi=300
+    )
     plt.close()
 
 
@@ -87,29 +108,52 @@ def plot_confusion_matrix(cm, classes, matrix_name, normalize=False, title='', c
     plt.close()
 
 
+def get_min_data_size():
+    '''
+    Returns size of matrix with lowest size (needed for balanced dataset)
+    '''
+    min_value = sys.maxsize
+    for array_file in os.listdir(AMPLITUDE_ARRAY_PATH):
+        file = h5py.File(os.path.join(AMPLITUDE_ARRAY_PATH, array_file), 'r')
+        if file['amplitudes'].shape[0] < min_value:
+            min_value = file['amplitudes'].shape[0]
+        file.close()
+    return min_value
+
+
 def get_random_forest_data():
     '''
     Returns tuple containing list of all amlitudes (X) and all_labels (y)
     '''
     all_amplitudes = []
     all_labels = []
+    array_size = get_min_data_size()
     for array_file in os.listdir(AMPLITUDE_ARRAY_PATH):
         file = h5py.File(os.path.join(AMPLITUDE_ARRAY_PATH, array_file), 'r')
-        # m * n matrix
-        all_amplitudes.extend(file['amplitudes'].value)
-        # m * 1 vector
-        all_labels.extend(file['labels'].value)
-        file.close()
 
+        values = file['amplitudes'].value[:array_size]
+        labels = file['labels'].value[:array_size]
+        # # m * n matrix
+        all_amplitudes.extend(values)
+        # # m * 1 vector
+        all_labels.extend(labels)
+        file.close()
     return (all_amplitudes, all_labels)
 
 
-def get_train_and_test_data():
+def get_train_data():
     file = h5py.File(os.path.join(PROCESSED_DATA_DIR, 'processed_data.hdf5'), 'r')
 
     return (
         file['x_train'].value,
-        file['x_test'].value,
         file['y_train'].value,
-        file['y_test'].value
+    )
+
+
+def get_test_data():
+    file = h5py.File(os.path.join(PROCESSED_DATA_DIR, 'processed_data.hdf5'), 'r')
+
+    return (
+        file['x_test'].value,
+        file['y_test'].value,
     )
