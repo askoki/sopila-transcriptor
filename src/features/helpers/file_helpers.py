@@ -32,3 +32,20 @@ def create_directories(directories):
     '''
     for directory in directories:
         create_directory(directory)
+
+
+def save_list_to_file(filepath, predicted_list, filename):
+    '''
+    filepath -> string representing path to the file
+    predicted_list -> List object to save in the file
+    filename -> string representing name of the file
+
+    corresponding to predicted list
+    '''
+    with open(filepath, 'a+') as file:
+        file.write('\n#' + filename + '\n')
+        list_to_string = '['
+        for line in predicted_list:
+            list_to_string += str(line) + ' '
+        list_to_string = list_to_string[:-1] + ']'
+        file.write(list_to_string)

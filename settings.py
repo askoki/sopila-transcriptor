@@ -8,14 +8,8 @@ RAW_DATA_DIR = os.path.join(DATA_DIR, 'raw')
 INTERIM_DATA_DIR = os.path.join(DATA_DIR, 'interim')
 PROCESSED_DATA_DIR  = os.path.join(DATA_DIR, 'processed')
 
-SPECTROGRAM_PATH = os.path.join(INTERIM_DATA_DIR, 'spectrograms')
-FILTER_DIR = os.path.join(INTERIM_DATA_DIR, 'filter')
-FILTER_SPECTROGRAM_DIR = os.path.join(INTERIM_DATA_DIR, 'filter+spectrograms')
+AMPLITUDE_ARRAY_PATH = os.path.join(INTERIM_DATA_DIR, 'amplitude_array')
 CUT_DIR = os.path.join(INTERIM_DATA_DIR, 'cut_recordings')
-
-TRAINING_DIR = os.path.join(PROCESSED_DATA_DIR, 'training')
-VALIDATION_DIR = os.path.join(PROCESSED_DATA_DIR, 'validation')
-TEST_DIR = os.path.join(PROCESSED_DATA_DIR, 'test')
 
 MODEL_DIR = os.path.join(ROOT_DIR, 'models')
 REPORTS_DIR = os.path.join(ROOT_DIR, 'reports')
@@ -26,10 +20,10 @@ REAL_DATA_DIR = os.path.join(DATA_DIR, 'real_data')
 
 REAL_DATA_CUT = os.path.join(REAL_DATA_DIR, 'cut')
 REAL_DATA_RAW = os.path.join(REAL_DATA_DIR, 'raw')
-REAL_DATA_SPEC = os.path.join(REAL_DATA_DIR, 'spec')
-REAL_DATA_FILTER_SPEC = os.path.join(REAL_DATA_DIR, 'spec+filter')
+REAL_DATA_AMP = os.path.join(REAL_DATA_DIR, 'amp')
+REAL_DATA_PREDICTIONS = os.path.join(REAL_DATA_DIR, 'predictions')
 
-REAL_DATA_FILES_DIR = os.path.join(ROOT_DIR, 'notebooks', '1.0-results', 'alternative_data')
+SHEETS_DIR = os.path.join(REPORTS_DIR, 'sheets')
 
 with open(os.path.join(ROOT_DIR, 'secrets.json')) as f:
     secrets = json.loads(f.read())
@@ -42,3 +36,16 @@ def get_secret(setting, secrets=secrets):
 
 NUMBER_OF_CORES = get_secret("NUMBER_OF_CORES")
 USE_GPU = get_secret("USE_GPU")
+
+#  ---------------- sheet_generator settings ----------------
+ABJAD_TONES = [
+    "gs'", "gss'", "as'", "b'", "c''", "d''", "ef''",  # mala tones
+    "b", "c'", "d'", "ef'", "f'", "gf'",  # vela tones
+    "r"  # pause
+]
+
+BEATS_PER_MINUTE = 60
+BEATS_PER_SECOND = BEATS_PER_MINUTE / 60
+# timeframe length in s
+TIMEFRAME_LENGTH = 0.01
+BEAT = BEATS_PER_SECOND / TIMEFRAME_LENGTH

@@ -40,9 +40,9 @@ def merge_audio_files(file1, file2, export_dirname):
     '''
     file1, file2 -> must be objects of AudioSegment
     '''
-    
+
     is_bigger = lambda s1, s2: True if s1.duration_seconds > s2.duration_seconds else False
-    
+
     if is_bigger(file1, file2):
         file1 = file1[:len(file2)]
         # needed in order to be the same length for stereo mapping
@@ -50,7 +50,7 @@ def merge_audio_files(file1, file2, export_dirname):
     else:
         file2 = file2[:len(file1)]
         file1 = file1[:len(file1)]
-    
+
     stereo_sound = AudioSegment.from_mono_audiosegments(file1, file2)
 
     # v__ is added in order to put mixed recordings after single ones

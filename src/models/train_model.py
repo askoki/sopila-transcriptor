@@ -1,13 +1,18 @@
 import os
 import sys
 sys.path.insert(1, os.path.join(sys.path[0], '..', '..'))
+sys.path.insert(1, os.path.join(sys.path[0], '..',))
 
-from settings import TRAINING_DIR, VALIDATION_DIR, MODEL_DIR, FIGURES_DIR, \
-    USE_GPU
-import keras
-import matplotlib.pyplot as plt
-from model import get_model
-from keras.preprocessing.image import ImageDataGenerator
+# from joblib import dump, load
+from joblib import dump
+import pandas as pd
+from settings import MODEL_DIR, USE_GPU, MODEL_DIR
+from joblib import load
+from features.helpers.data_helpers import plot_model_statistics, \
+    get_train_data, get_test_data
+import datetime
+
+from sklearn.ensemble import RandomForestClassifier
 
 if USE_GPU:
     # use if you are running on a PC with many GPU-s
@@ -18,97 +23,36 @@ if USE_GPU:
     # just disables the warning, doesn't enable AVX/FMA
     os.environ['TF_CPP_MIN_LOG_LEVEL'] = "2"
 
-# -------- required arguments --------
-num_classes = int(sys.argv[1])
-data_name = str(sys.argv[2]) + '_tloss'
-# ------------------------------------
-batch_size = 50
-epochs = 12
+if len(sys.argv) < 2:
+    model_name = '49_class_random_forest_default_name'
+else:
+    model_name = int(sys.argv[1])
 
-# input image dimensions
-img_rows, img_cols = 480, 20
-input_shape = (img_rows, img_cols, 3)
 
-train_datagen = ImageDataGenerator(
-    rescale=1. / 255,
-    featurewise_std_normalization=True,
-    horizontal_flip=False
+x_train, y_train = get_train_data()
+
+# Kreiranje random forest klasifikatora
+rnd_clf = RandomForestClassifier(
+    n_estimators=100,
+    criterion='gini',
+    n_jobs=-1,
+    verbose=2,
 )
 
-val_datagen = ImageDataGenerator(rescale=1. / 255)
+# Treniranje i predviđanje modela
+print('Before:')
+print(datetime.datetime.now())
+rnd_clf.fit(X=x_train, y=y_train)
+print('After:')
+print(datetime.datetime.now())
+dump(rnd_clf, os.path.join(MODEL_DIR, model_name + '.joblib'))
 
-train_generator = train_datagen.flow_from_directory(
-    os.path.join(TRAINING_DIR),
-    target_size=(img_rows, img_cols),
-    color_mode='rgb',
-    batch_size=batch_size,
-    class_mode='categorical',
-    shuffle=True
-)
+x_test, y_test = get_test_data()
 
-validation_generator = val_datagen.flow_from_directory(
-    os.path.join(VALIDATION_DIR),
-    target_size=(img_rows, img_cols),
-    color_mode='rgb',
-    # classes=class_labels
-    batch_size=batch_size,
-    class_mode='categorical',
-    shuffle=True
-)
+train_accuracy = rnd_clf.score(X=x_train, y=y_train)
+test_accuracy = rnd_clf.score(X=x_test, y=y_test)
 
-model = get_model(input_shape, num_classes)
+plot_model_statistics('accuracy', train_accuracy, test_accuracy, model_name)
 
-model.compile(
-    loss=keras.losses.categorical_crossentropy,
-    optimizer=keras.optimizers.Adadelta(),
-    metrics=['accuracy']
-)
-
-history = model.fit_generator(
-    train_generator,
-    steps_per_epoch=batch_size,
-    epochs=epochs,
-    verbose=1,
-    validation_data=validation_generator,
-    validation_steps=batch_size,
-    callbacks=[
-        keras.callbacks.EarlyStopping(
-            monitor='train_loss', min_delta=0.00001
-        )
-    ]
-)
-
-# list all data in history
-print(history.history.keys())
-
-# summarize history for accuracy
-plt.figure('Accuracy')
-plt.plot(history.history['acc'])
-plt.plot(history.history['val_acc'])
-plt.title('model accuracy')
-plt.ylabel('accuracy')
-plt.xlabel('epoch')
-plt.legend(['train', 'validation'], loc='upper left')
-# plt.show()
-plt.savefig(os.path.join(FIGURES_DIR, 'accuracy_' + data_name + '.jpg'))
-plt.clf()
-
-# summarize history for loss
-plt.figure('Loss')
-plt.plot(history.history['loss'])
-plt.plot(history.history['val_loss'])
-plt.title('model loss')
-plt.ylabel('loss')
-plt.xlabel('epoch')
-plt.legend(['train', 'validation'], loc='upper left')
-# plt.show()
-plt.savefig(os.path.join(FIGURES_DIR, 'loss_' + data_name + '.jpg'))
-
-# serialize model to JSON
-model_json = model.to_json()
-with open(os.path.join(MODEL_DIR, 'model_' + data_name + '.json'), 'w') as json_file:
-    json_file.write(model_json)
-
-# serialize weights to HDF5
-model.save_weights(os.path.join(MODEL_DIR, 'model_' + data_name + '.h5'))
-print('Saved model to disk')
+print(train_accuracy)
+print(test_accuracy)

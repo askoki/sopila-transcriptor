@@ -2,26 +2,17 @@
 
 # 1. step cut recordings
 echo '1. Cutting recordings'
-python cut_original_recordings.py 50
+python cut_original_recordings.py 10
 
-# 2. step make spectrogram images from cut recordings
-echo '2. Making spectrogram images from cut recordings...'
-python make_spectrogram.py
+# 2. level combined recordings
+echo '2. Leveling stereo recordings'
+python level_combined_recordings.py
 
-# 3. make filter (if it does not exist)
-echo '3. Making filter...'
-python ../utils/make_filter.py
+# 3. Extract amplitudes from every cut recording
+echo '3. Making file with all extracted amplitudes...'
+python make_amplitude_array.py
 
-# 4. apply filter to the images
-echo '4. Applying filter to the images...'
-python apply_filter.py
-
-# 5. distribute images to training and test set in processed data folder
-echo '5. Creating training, validation and test set...'
-python sort_train_validation_test_data.py
-
-# # train
-# python ../models/train_model.py
-# # predict
-# python ../models/predict_model.py
+# 4. Split data set into training and test
+echo '4. Creating training and test set...'
+python create_train_test_data.py
 
