@@ -38,14 +38,26 @@ NUMBER_OF_CORES = get_secret("NUMBER_OF_CORES")
 USE_GPU = get_secret("USE_GPU")
 
 #  ---------------- sheet_generator settings ----------------
-ABJAD_TONES = [
-    "gs'", "gss'", "as'", "b'", "c''", "d''", "ef''",  # mala tones
-    "b", "c'", "d'", "ef'", "f'", "gf'",  # vela tones
-    "r"  # pause
-]
+ABJAD_TONES = {
+    # mala tones
+    'm5': "gss'",
+    'm4': "as'",
+    'm3': "b'",
+    'm2': "c''",
+    'm1': "d''",
+    'm0': "ef''",
+    # vela tones
+    'v5': "b",
+    'v4': "c'",
+    'v3': "d'",
+    'v2': "ef'",
+    'v1': "f'",
+    'v0': "gf'",
+    'pause': "r"  # pause
+}
 
 BEATS_PER_MINUTE = 60
 BEATS_PER_SECOND = BEATS_PER_MINUTE / 60
 # timeframe length in s
-TIMEFRAME_LENGTH = 0.01
+TIMEFRAME_LENGTH = 0.04
 BEAT = BEATS_PER_SECOND / TIMEFRAME_LENGTH

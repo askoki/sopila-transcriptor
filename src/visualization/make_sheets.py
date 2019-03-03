@@ -1,10 +1,11 @@
 import os
 import sys
 import h5py
+import re
 # path to settings
 sys.path.insert(1, os.path.join(sys.path[0], '..', '..'))
 from settings import REAL_DATA_PREDICTIONS, SHEETS_DIR, ABJAD_TONES, BEAT
-from abjad import Staff
+from abjad import Staff, Voice, LilyPondLiteral, attach, Container, show
 from abjad.system.PersistenceManager import PersistenceManager
 
 
@@ -16,7 +17,7 @@ class ToneParser:
         file = h5py.File(os.path.join(REAL_DATA_PREDICTIONS, filename), 'r')
         self.tone_list = file['predictions'].value
         file.close()
-
+        self.strip_silence()
 
     def strip_silence(self):
         '''
@@ -26,74 +27,147 @@ class ToneParser:
         end_idx = -1
         # class position
         for i, tone in enumerate(self.tone_list):
-            if 'silence' in tone:
+            if not 'silence' in tone:
                 start_idx = i
                 break
 
         for i, tone in reversed(list(enumerate(self.tone_list))):
-            if 'silence' in tone:
+            if not 'silence' in tone:
                 end_idx = i - 1
                 break
 
         self.tone_list = self.tone_list[start_idx:end_idx]
 
+    def get_abjad_tones(self, tone_class_name):
+        '''
+        Returns tuple containing mala and vela values.
+        '''
 
-    def get_abjad_tone(self, tone_class_number):
-        return ABJAD_TONES[tone_class_number]
+        try:
+            mala = re.search('m\d', tone_class_name).group(0)
+        except AttributeError:
+            mala = None
 
+        try:
+            vela = re.search('v\d', tone_class_name).group(0)
+        except AttributeError:
+            vela = None
+
+        # pause
+        if not mala:
+            mala = 'pause'
+        if not vela:
+            vela = 'pause'
+
+        return (ABJAD_TONES[mala], ABJAD_TONES[vela])
+
+    def merge_same_tones(self, tone_list):
+        '''
+        tone_list => list of tuples containing information about mala class,
+        vela class and duration.
+        Returns squashed list with distinct values in sequence array example:
+        aaabbbccc becomes abc
+        '''
+        merged_tone_list = []
+
+        prev = tone_list[0]
+        prev_tone_length = prev[2]
+        for mala_tone, vela_tone, tone_length in tone_list[1:]:
+            if prev[0] == mala_tone and prev[1] == vela_tone:
+                prev_tone_length += tone_length
+            else:
+                merged_tone_list.append((prev[0], prev[1], prev_tone_length))
+                prev_tone_length = tone_length
+                prev = (mala_tone, vela_tone, tone_length)
+        return merged_tone_list
 
     def get_tones_dict(self):
         '''
-        Returnes list of tuples. First value in the tuple is abjad tone name and
-        second value is number of consecutive frames with that tone.
+        Returnes tuple containing two list of tuples. First list is set of
+        tone and duration values of 'mala' and second are values of 'vela'.
+        First value in each tuple is abjad tone name and second value is
+        number of consecutive frames with that tone.
         '''
-        new_tone_list = []
+        tone_list = []
         tone_length = 0
+        # if tone is missclassified then tone length is assigned to next tone
+        transition_length = 0
+        IGNORE_THRESHOLD = 3
 
         prev = self.tone_list[0]
-        for i, tone in enumerate(self.tone_list[1:]):
+        for i, tone_class_name in enumerate(self.tone_list[1:]):
             tone_length += 1
-            if prev != tone:
-                new_tone_list.append((self.get_abjad_tone(tone), tone_length))
+            if prev != tone_class_name:
+                mala_tone, vela_tone = self.get_abjad_tones(prev)
+
+                if tone_length <= IGNORE_THRESHOLD:
+                    transition_length += tone_length
+                else:
+                    tone_list.append(
+                        (mala_tone, vela_tone, tone_length + transition_length)
+                    )
+                    transition_length = 0
                 # reset
                 tone_length = 0
-                prev = tone
+                prev = tone_class_name
 
         # append last
-        last_dict_name = self.tone_list[-1]
-        new_tone_list.append((self.get_abjad_tone(last_dict_name), tone_length))
+        if tone_length <= IGNORE_THRESHOLD:
+            last_dict_name = self.tone_list[-1]
+            mala_tone, vela_tone = self.get_abjad_tones(last_dict_name)
+            tone_list.append((mala_tone, vela_tone, tone_length))
 
-        return new_tone_list
+        return self.merge_same_tones(tone_list)
 
     def get_duration_label(self, frames):
 
         if frames > 4 * BEAT:
             return '1'
-        elif 2 * BEAT < frames:
+        elif frames > 2 * BEAT:
             return '2'
-        elif BEAT < frames:
+        elif frames > BEAT:
             return '4'
-        elif BEAT / 2 < frames:
+        elif frames > BEAT / 2:
             return '8'
-        elif BEAT / 4 < frames:
+        elif frames > BEAT / 4:
             return '16'
-        elif BEAT / 8 < frames:
-            return '32'
+        # elif frames > BEAT / 8:
+        #     return '32'
         # if beat is smaller then it is discarded
         return None
 
     def parse_tones(self, filename):
-        self.strip_silence()
-        tones_string = ''
-        for tone in self.get_tones_dict():
-            duration = self.get_duration_label(tone[1])
+        notes = Staff()
+        # remove measure and tacts
+        notes.remove_commands.append('Time_signature_engraver')
+        notes.remove_commands.append('Bar_engraver')
+
+        for mala_tone, vela_tone, tone_length in self.get_tones_dict():
+            # print(mala_tone, vela_tone, tone_length)
+            duration = self.get_duration_label(tone_length)
+
             if duration:
-                tones_string += tone[0] + duration + ' '
-        staff = Staff(tones_string)
-        PersistenceManager(client=staff).as_pdf(os.path.join(SHEETS_DIR, 'pdf', filename))
+                mala_voice = Voice(mala_tone + duration, name='mala voice')
+                literal = LilyPondLiteral(r'\voiceOne')
+                attach(literal, mala_voice)
+
+                vela_voice = Voice(vela_tone + duration, name='vela voice')
+                literal = LilyPondLiteral(r'\voiceTwo')
+                attach(literal, vela_voice)
+
+                container = Container([mala_voice, vela_voice])
+                container.is_simultaneous = True
+                notes.append(container)
+
+        # show(notes)
+        PersistenceManager(client=notes).as_pdf(os.path.join(SHEETS_DIR, filename))
 
 
 for filename in os.listdir(REAL_DATA_PREDICTIONS):
     print("Filename: %s" % (filename))
     sheet = ToneParser(filename)
     sheet.parse_tones(filename)
+
+
+# sheet = ToneParser('sadila_je_mare.hdf5')
+# sheet.parse_tones('sadila_je_mare')
