@@ -80,8 +80,6 @@ def plot_confusion_matrix(cm, classes, matrix_name, normalize=False, title='', c
 
     # Create Figure and Axes instances
     fig = plt.figure("Confusion matrix", frameon=False)
-    # 20 x 480 pixels
-    fig.set_size_inches(20, 20)
 
     plt.imshow(cm, interpolation='nearest', cmap=cmap)
     plt.title(title)

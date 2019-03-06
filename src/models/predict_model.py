@@ -12,11 +12,11 @@ from sklearn.metrics import confusion_matrix
 
 
 if len(sys.argv) < 2:
-    model_name = '49_class_random_forest_default_name'
-    matrix_name = '49_class_matrix_default_random_forest'
+    model_name = '13_class_random_forest_default_name'
+    matrix_name = '13_class_matrix_default_random_forest'
 else:
-    model_name = str(sys.argv[1]) + '_random_forest'
-    matrix_name = sys.argv[2] + '_random_forest'
+    model_name = str(sys.argv[1])
+    matrix_name = sys.argv[2]
 
 class_labels = os.listdir(CUT_DIR)
 class_labels.sort()
