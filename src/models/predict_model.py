@@ -57,22 +57,23 @@ plot_confusion_matrix(cm, class_labels, matrix_name)
 
 # ------ real data predict
 
-from settings import REAL_DATA_AMP, REAL_DATA_FILES_DIR
+from settings import REAL_DATA_AMP, REAL_DATA_PREDICTIONS
 import h5py
-
-filepath = os.path.join(REAL_DATA_FILES_DIR, model_name + '.txt')
-
-# create new file with same name
-file = open(filepath, 'w')
-file.close()
 
 audio_files = os.listdir(os.path.join(REAL_DATA_AMP))
 audio_files.sort()
  
-for audio in audio_files:
-    file = h5py.File(os.path.join(REAL_DATA_AMP, audio), 'r')
-    to_be_predicted = file['amplitudes'].value
-    to_be_predicted = np.expand_dims(to_be_predicted, axis=3)
+for filename in audio_files:
+    file = h5py.File(os.path.join(REAL_DATA_AMP, filename), 'r')
+    to_be_predicted = np.expand_dims(file['amplitudes'].value, axis=3)
     # predicted class
-    predicted_class = model.predict_classes(to_be_predicted, batch_size=20)
-    save_list_to_file(filepath, predicted_class, audio[:-5])
+    predicted_classes = model.predict_classes(to_be_predicted, batch_size=20)
+    file.close()
+
+    predicted_file = h5py.File(os.path.join(REAL_DATA_PREDICTIONS, filename), 'w')
+    predicted_file.create_dataset(
+        'predictions',
+        data=predicted_classes,
+        dtype='i'
+    )
+    predicted_file.close()

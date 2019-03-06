@@ -4,7 +4,7 @@ import sys
 sys.path.insert(1, os.path.join(sys.path[0], '..', '..'))
 
 from helpers.file_helpers import create_directory, clear_dir
-from helpers.data_helpers import get_folder_class_index
+from helpers.data_helpers import get_folder_class_index, natural_sort
 from pydub import AudioSegment
 from os import listdir
 from settings import NUMBER_OF_CORES
@@ -38,6 +38,8 @@ def normalize_amplitudes(amplitudes):
 
 def create_folder_amplitude_array(folder):
     folder_files = listdir(os.path.join(CUT_DIR, folder))
+    folder_files = natural_sort(folder_files)
+    
     create_directory(os.path.join(AMPLITUDE_ARRAY_PATH))
 
     array_file = h5py.File(os.path.join(AMPLITUDE_ARRAY_PATH, folder + '.hdf5'), 'w')
@@ -58,7 +60,7 @@ def create_folder_amplitude_array(folder):
 
         all_norm_amplitudes.append(norm_amplitudes)
 
-    amplitudes = array_file.create_dataset(
+    array_file.create_dataset(
         'amplitudes',
         data=all_norm_amplitudes,
         dtype='f'

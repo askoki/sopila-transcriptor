@@ -136,33 +136,3 @@ def get_test_data():
         file['x_test'].value,
         file['y_test'].value,
     )
-
-
-def get_folder_class_index(folder_name):
-    
-    if folder_name == 'm0':
-        return 0
-    elif folder_name == 'm1':
-        return 1
-    elif folder_name == 'm2':
-        return 2
-    elif folder_name == 'm3':
-        return 3
-    elif folder_name == 'm4':
-        return 4
-    elif folder_name == 'm5':
-        return 5
-    elif folder_name == 'v0':
-        return 6
-    elif folder_name == 'v1':
-        return 7
-    elif folder_name == 'v2':
-        return 8
-    elif folder_name == 'v3':
-        return 9
-    elif folder_name == 'v4':
-        return 10
-    elif folder_name == 'v5':
-        return 11
-    
-    return 12
