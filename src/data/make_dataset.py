@@ -8,8 +8,8 @@ sys.path.insert(1, os.path.join(sys.path[0], '..'))
 
 from google_drive_downloader import GoogleDriveDownloader as gdd
 from features.helpers.file_helpers import clear_dir, create_directories
-from settings import RAW_DATA_DIR, INTERIM_DATA_DIR, \
-    PROCESSED_DATA_DIR, SPECTROGRAM_PATH, AMPLITUDE_ARRAY_PATH, CUT_DIR
+from settings import RAW_DATA_DIR, INTERIM_DATA_DIR, SHEETS_DIR, \
+    PROCESSED_DATA_DIR, SPECTROGRAM_PATH, AMPLITUDE_ARRAY_PATH
 
 
 # create base data folder structure
@@ -19,7 +19,7 @@ directories_to_create = [
     PROCESSED_DATA_DIR,
     SPECTROGRAM_PATH,
     AMPLITUDE_ARRAY_PATH,
-    CUT_DIR,
+    CUT_DIR
 ]
 
 # create directories in data folder

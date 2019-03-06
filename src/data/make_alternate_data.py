@@ -8,7 +8,7 @@ sys.path.insert(1, os.path.join(sys.path[0], '..', 'features'))
 from google_drive_downloader import GoogleDriveDownloader as gdd
 from helpers.file_helpers import clear_dir, create_directories
 from settings import REAL_DATA_DIR, REAL_DATA_CUT, REAL_DATA_RAW, \
-    REAL_DATA_AMP, REAL_DATA_FILES_DIR,
+    REAL_DATA_AMP, REAL_DATA_FILES_DIR, SHEETS_DIR
 
 
 # create base data folder structure
@@ -17,7 +17,8 @@ directories_to_create = [
     REAL_DATA_CUT,
     REAL_DATA_RAW,
     REAL_DATA_AMP,
-    REAL_DATA_FILES_DIR
+    REAL_DATA_FILES_DIR,
+    SHEETS_DIR
 ]
 
 # create directories in data folder

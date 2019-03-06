@@ -57,7 +57,7 @@ def create_folder_amplitude_array(folder):
         fft = np.fft.fft(np.array(data.get_array_of_samples()))
         N = fft.size
         f = abs(np.fft.fftfreq(N) * data.frame_rate)
-        # import pdb; pdb.set_trace()
+
         norm_amplitudes = normalize_amplitudes(fft)
 
         all_norm_amplitudes.append(norm_amplitudes)

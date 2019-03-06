@@ -79,6 +79,9 @@ class ToneParser:
                 merged_tone_list.append((prev[0], prev[1], prev_tone_length))
                 prev_tone_length = tone_length
                 prev = (mala_tone, vela_tone, tone_length)
+        # append last tone
+        if prev_tone_length > 0:
+            merged_tone_list.append((prev[0], prev[1], prev_tone_length))
         return merged_tone_list
 
     def get_tones_dict(self):
@@ -112,7 +115,7 @@ class ToneParser:
                 prev = tone_class_name
 
         # append last
-        if tone_length <= IGNORE_THRESHOLD:
+        if tone_length >= IGNORE_THRESHOLD:
             last_dict_name = self.tone_list[-1]
             mala_tone, vela_tone = self.get_abjad_tones(last_dict_name)
             tone_list.append((mala_tone, vela_tone, tone_length))

@@ -8,7 +8,7 @@ python cut_original_recordings.py 10 'alternative'
 echo '2. Leveling stereo recordings'
 python level_combined_recordings.py 'alternative'
 
-# 2. Extract amplitudes from every cut recording
-echo '2. Making file with all extracted amplitudes...'
+# 3. Extract amplitudes from every cut recording
+echo '3. Making file with all extracted amplitudes...'
 python make_amplitude_array.py 'alternative'
 
