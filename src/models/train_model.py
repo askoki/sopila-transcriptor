@@ -22,7 +22,7 @@ if USE_GPU:
 
 # -------- required arguments --------
 num_classes = int(sys.argv[1])
-data_name = str(sys.argv[2]) + '_tloss_1D_'
+data_name = str(sys.argv[2])
 # ------------------------------------
 batch_size = 50
 epochs = 12
