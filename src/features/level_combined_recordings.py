@@ -5,7 +5,6 @@ sys.path.insert(1, os.path.join(sys.path[0], '..', '..'))
 from pydub import AudioSegment
 from settings import NUMBER_OF_CORES
 from os import listdir
-from settings import CUT_DIR
 
 # alternative dir
 if len(sys.argv) > 1:
