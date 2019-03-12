@@ -32,6 +32,7 @@ batch_size = 50
 
 class_labels = os.listdir(CUT_DIR)
 class_labels.sort()
+class_labels = [label.replace('vv_', '').replace('silence', 'blank') for label in class_labels]
 
 # model must be the same as trained
 model = get_model((n_cols, 1), num_classes)
