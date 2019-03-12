@@ -1,7 +1,7 @@
 import os
 import sys
 sys.path.insert(0, os.path.join(sys.path[0], '..', '..'))
-from settings import FIGURES_DIR, AMPLITUDE_ARRAY_PATH, PROCESSED_DATA_DIR
+from settings import FIGURES_DIR, AMPLITUDE_ARRAY_PATH, PROCESSED_DATA_DIR, CUT_DIR
 
 import re
 import itertools
@@ -136,3 +136,15 @@ def get_test_data():
         file['x_test'].value,
         file['y_test'].value,
     )
+    
+def get_folder_class_index(folder_name):
+    
+    class_labels = os.listdir(CUT_DIR)
+    class_labels.sort()
+    
+    try:
+        return_class = class_labels.index(folder_name)
+    except ValueError:
+        print("Class was not found")
+        return_class = 0
+    return return_class
