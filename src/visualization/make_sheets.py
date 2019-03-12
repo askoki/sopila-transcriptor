@@ -201,5 +201,5 @@ for filename in os.listdir(REAL_DATA_PREDICTIONS):
     sheet.parse_tones(filename)
 
 
-# sheet = ToneParser('sadila_je_mare.hdf5')
-# sheet.parse_tones('sadila_je_mare')
+# sheet = ToneParser('zajedno505.hdf5')
+# sheet.parse_tones('zajedno505')

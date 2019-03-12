@@ -16,10 +16,11 @@ if len(sys.argv) < 2:
     matrix_name = '49_class_matrix_default_random_forest'
 else:
     model_name = str(sys.argv[1]) + '_random_forest'
-    matrix_name = sys.argv[2] + '_random_forest'
+    matrix_name = sys.argv[2]
 
 class_labels = os.listdir(CUT_DIR)
 class_labels.sort()
+class_labels = [label.replace('vv_', '').replace('silence', 'blank') for label in class_labels]
 
 x_test, y_test = get_test_data()
 rnd_clf = load(os.path.join(MODEL_DIR, model_name + '.joblib'))
