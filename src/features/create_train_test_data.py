@@ -9,7 +9,7 @@ from sklearn.model_selection import train_test_split
 import h5py
 
 X, y = get_random_forest_data()
-x_train, x_test, y_train, y_test = train_test_split(X, y, random_state=42)
+x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
 processed_data_file = h5py.File(
     os.path.join(PROCESSED_DATA_DIR, 'processed_data.hdf5'),

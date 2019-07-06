@@ -1,6 +1,10 @@
 # !/usr/bin/env python
+import faulthandler
+faulthandler.enable()
 import os
 import sys
+import h5py
+import numpy as np
 sys.path.insert(1, os.path.join(sys.path[0], '..', '..'))
 
 from helpers.file_helpers import create_directory, clear_dir
@@ -15,8 +19,6 @@ if len(sys.argv) > 1:
 else:
     from settings import CUT_DIR, AMPLITUDE_ARRAY_PATH
 
-import h5py
-import numpy as np
 
 
 def normalize_amplitudes(amplitudes):
@@ -81,7 +83,7 @@ def create_folder_amplitude_array(folder):
 from multiprocessing import Pool
 
 if __name__ == '__main__':
-    # delete old spectrogram data (if exists)
+    # delete old amplitude array data (if exists)
     clear_dir(AMPLITUDE_ARRAY_PATH)
 
     recordings_folders = listdir(os.path.join(CUT_DIR))
