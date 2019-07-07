@@ -10,7 +10,7 @@ from google_drive_downloader import GoogleDriveDownloader as gdd
 from features.helpers.file_helpers import clear_dir, create_directories
 from settings import RAW_DATA_DIR, INTERIM_DATA_DIR, \
     PROCESSED_DATA_DIR, AMPLITUDE_ARRAY_PATH, CUT_DIR, \
-    TRAINING_DIR, TEST_DIR, VALIDATION_DIR
+    TRAINING_DIR, TEST_DIR, VALIDATION_DIR, STATISTICS_DIR
 
 
 # create base data folder structure
@@ -22,7 +22,8 @@ directories_to_create = [
     CUT_DIR,
     TRAINING_DIR,
     VALIDATION_DIR,
-    TEST_DIR
+    TEST_DIR,
+    STATISTICS_DIR
 ]
 
 # create directories in data folder

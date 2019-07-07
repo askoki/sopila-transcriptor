@@ -49,29 +49,31 @@ model.compile(
 
 true_classes = y_test
 predicted_classes = model.predict_classes(x_test, batch_size=20)
+from sklearn.metrics import accuracy_score
+print(accuracy_score(predicted_classes, true_classes))
 
 cm = confusion_matrix(true_classes, predicted_classes)
 plot_confusion_matrix(cm, class_labels, matrix_name)
-
+#
 # ------ real data predict
 
-from settings import REAL_DATA_AMP, REAL_DATA_PREDICTIONS
-import h5py
-
-audio_files = os.listdir(os.path.join(REAL_DATA_AMP))
-audio_files.sort()
- 
-for filename in audio_files:
-    file = h5py.File(os.path.join(REAL_DATA_AMP, filename), 'r')
-    to_be_predicted = np.expand_dims(file['amplitudes'].value, axis=3)
-    # predicted class
-    predicted_classes = model.predict_classes(to_be_predicted, batch_size=20)
-    file.close()
-
-    predicted_file = h5py.File(os.path.join(REAL_DATA_PREDICTIONS, filename), 'w')
-    predicted_file.create_dataset(
-        'predictions',
-        data=predicted_classes,
-        dtype='i'
-    )
-    predicted_file.close()
+#from settings import REAL_DATA_AMP, REAL_DATA_PREDICTIONS
+#import h5py
+#
+#audio_files = os.listdir(os.path.join(REAL_DATA_AMP))
+#audio_files.sort()
+# 
+#for filename in audio_files:
+#    file = h5py.File(os.path.join(REAL_DATA_AMP, filename), 'r')
+#    to_be_predicted = np.expand_dims(file['amplitudes'].value, axis=3)
+#    # predicted class
+#    predicted_classes = model.predict_classes(to_be_predicted, batch_size=20)
+#    file.close()
+#
+#    predicted_file = h5py.File(os.path.join(REAL_DATA_PREDICTIONS, filename), 'w')
+#    predicted_file.create_dataset(
+#        'predictions',
+#        data=predicted_classes,
+#        dtype='i'
+#    )
+#    predicted_file.close()
