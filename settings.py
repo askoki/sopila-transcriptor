@@ -18,6 +18,7 @@ TEST_DIR = os.path.join(PROCESSED_DATA_DIR, 'test')
 MODEL_DIR = os.path.join(ROOT_DIR, 'models')
 REPORTS_DIR = os.path.join(ROOT_DIR, 'reports')
 FIGURES_DIR = os.path.join(REPORTS_DIR, 'figures')
+STATISTICS_DIR = os.path.join(REPORTS_DIR, 'statistics')
 
 # test
 REAL_DATA_DIR = os.path.join(DATA_DIR, 'real_data')

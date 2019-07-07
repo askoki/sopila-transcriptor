@@ -3,25 +3,35 @@ from keras.layers import Dense, Dropout, Flatten
 from keras.layers import Conv1D, MaxPooling1D
 
 
-def get_model(input_shape, num_classes):
-    '''
+def get_model(input_shape, num_classes, cnn_layers=1, num_filters=16, filter_size=3, hidden_layers=64):
+    """
     return keras model (used in training and prediction)
     input_shape -> tuple containing targeted size (rows, cols)
     num_classes -> integer containing number of classes
-    '''
+    """
     model = Sequential()
-    model.add(Conv1D(
-        32,
-        kernel_size=10,
-        activation='relu',
-        input_shape=input_shape
-    ))
-
-    model.add(Conv1D(64, 10, activation='relu'))
-    model.add(MaxPooling1D(3))
+    # cnn_layers 1, num_filters 64, filter size 3, hidden layers 64 pada
+    if num_filters >= 64:
+        model.add(Conv1D(
+            32,
+            kernel_size=filter_size,
+            activation='relu',
+            input_shape=input_shape
+        ))
+    else:
+        model.add(Conv1D(
+            num_filters,
+            kernel_size=filter_size,
+            activation='relu',
+            input_shape=input_shape
+        ))
+    model.add(MaxPooling1D(2))
+    if cnn_layers >= 2:
+        model.add(Conv1D(num_filters, filter_size, activation='relu'))
+        model.add(MaxPooling1D(2))
     model.add(Dropout(0.25))
     model.add(Flatten())
-    model.add(Dense(128, activation='relu'))
+    model.add(Dense(hidden_layers, activation='relu'))
     model.add(Dropout(0.5))
     # softmax predicts 1 of many classes
     # sigmoid is used both binary and multi-label classification problems,
