@@ -1,0 +1,17 @@
+n_estimators 850
+criterion entropy
+bootstrap False
+min_samples_split 2
+min_samples_leaf 1
+max_features auto
+max_depth 80
+Training_shape (22630, 441)
+Test_shape (5658, 441)
+Training_accuracy 1.0
+Training_precision 1.0
+Training_recall 1.0
+Training_F1 1.0
+Test_accuracy 0.9794980558501237
+Test_precision 0.9794980558501237
+Test_recall 0.9794980558501237
+Test_F1 0.9794980558501237

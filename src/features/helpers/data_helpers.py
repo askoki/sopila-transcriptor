@@ -168,24 +168,27 @@ def get_min_data_size():
     return min_value
 
 
-def get_random_forest_data():
+def get_random_forest_data(dir_path=AMPLITUDE_ARRAY_PATH):
     """
     Returns tuple containing list of all amlitudes (X) and all_labels (y)
     """
-    all_amplitudes = []
+    all_values = []
     all_labels = []
     array_size = get_min_data_size()
-    for array_file in os.listdir(AMPLITUDE_ARRAY_PATH):
-        file = h5py.File(os.path.join(AMPLITUDE_ARRAY_PATH, array_file), 'r')
+    for array_file in os.listdir(dir_path):
+        file = h5py.File(os.path.join(dir_path, array_file), 'r')
 
-        values = file['amplitudes'].value[:array_size]
+        if dir_path != AMPLITUDE_ARRAY_PATH:
+            values = file['waveform'].value[:array_size]
+        else:
+            values = file['amplitudes'].value[:array_size]
         labels = file['labels'].value[:array_size]
         # # m * n matrix
-        all_amplitudes.extend(values)
+        all_values.extend(values)
         # # m * 1 vector
         all_labels.extend(labels)
         file.close()
-    return (all_amplitudes, all_labels)
+    return (all_values, all_labels)
 
 
 def get_train_data():

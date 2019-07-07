@@ -11,19 +11,14 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import RandomizedSearchCV
 
 
-# def evaluate(title, model, test_features, test_labels):
-#     predictions = model.predict(test_features)
-#     errors = abs(predictions - test_labels)
-#     mape = 100 * np.mean(errors / test_labels)
-#     accuracy = 100 - mape
-#     with open('random_search.txt', 'a+') as f:
-#         print('Model name ' + title, file=f)
-#         print('Model Performance', file=f)
-#         print('Average Error: {:0.4f} degrees.'.format(
-#             np.mean(errors)), file=f)
-#         print('Accuracy = {:0.2f}%.'.format(accuracy), file=f)
+def evaluate(title, model, test_features, test_labels):
+    accuracy = model.score(test_features, test_labels)
+    with open('random_search_nofilter.txt', 'a+') as f:
+        print('Model name ' + title, file=f)
+        print('Model Performance', file=f)
+        print('Accuracy = {:0.2f}%.'.format(accuracy), file=f)
 
-#     return accuracy
+    return accuracy
 
 if USE_GPU:
     # use if you are running on a PC with many GPU-s
@@ -79,20 +74,19 @@ rf_random = RandomizedSearchCV(
 rf_random.fit(X=x_train, y=y_train)
 print(rf_random.best_params_)
 
+x_test, y_test = get_test_data()
 
-# x_test, y_test = get_test_data()
+# create and erase file
+open('random_search_nofilter.txt', 'w+').close()
 
-# # create and erase file
-# open('random_search.txt', 'w+').close()
+base_model = RandomForestClassifier(random_state=42)
+base_model.fit(x_train, y_train)
+base_accuracy = evaluate('base model', base_model, x_test, y_test)
 
-# base_model = RandomForestClassifier(n_estimators=10, random_state=42)
-# base_model.fit(x_train, y_train)
-# base_accuracy = evaluate('base model', base_model, x_test, y_test)
+best_random = rf_random.best_estimator_
+random_accuracy = evaluate('best random', best_random, x_test, y_test)
 
-# best_random = rf_random.best_estimator_
-# random_accuracy = evaluate('best random', best_random, x_test, y_test)
-
-# print(
-#     'Improvement of {:0.2f}%.'.format(
-#         100 * (random_accuracy - base_accuracy) / base_accuracy)
-# )
+print(
+    'Improvement of {:0.2f}%.'.format(
+        100 * (random_accuracy - base_accuracy) / base_accuracy)
+)

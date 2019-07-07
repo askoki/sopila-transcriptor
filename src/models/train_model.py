@@ -36,18 +36,28 @@ x_train, y_train = get_train_data()
 rnd_clf = RandomForestClassifier(
     n_estimators=100,
     criterion='gini',
-    n_jobs=-1,
+    n_jobs=2,
     verbose=2,
 )
 
-n_estimators = [110, 130, 150, 170, 190]
+# # rf 13 classes
+# n_estimators = [110, 130, 150, 170, 190]
+# criterion = ['gini', 'entropy']
+# bootstrap = [False]
+# min_samples_split = [2, 4, 6]
+# min_samples_leaf = [1]
+# max_features = ['auto']
+# max_depth = [90, 100, 110, 120, 130]
+
+# rf 13 classes no filter
+n_estimators = [800, 850, 900, 950, 1000]
 criterion = ['gini', 'entropy']
-bootstrap = [False]
 min_samples_split = [2, 4, 6]
 min_samples_leaf = [1]
 max_features = ['auto']
-max_depth = [90, 100, 110, 120, 130]
+max_depth = [60, 70, 80, 90, 100]
 bootstrap = [False]
+
 
 param_cartesian_product = product(
     n_estimators,
@@ -59,7 +69,10 @@ param_cartesian_product = product(
     max_depth,
 )
 
-for parameters in param_cartesian_product:
+for i, parameters in enumerate(param_cartesian_product):
+
+    # if i <= 8:
+    #     continue
     # Treniranje i predviđanje modela
     print('Before:')
     print(datetime.datetime.now())
