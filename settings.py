@@ -9,10 +9,12 @@ INTERIM_DATA_DIR = os.path.join(DATA_DIR, 'interim')
 PROCESSED_DATA_DIR  = os.path.join(DATA_DIR, 'processed')
 
 AMPLITUDE_ARRAY_PATH = os.path.join(INTERIM_DATA_DIR, 'amplitude_array')
+UNFILTERED_PATH = os.path.join(INTERIM_DATA_DIR, 'unfiltered')
 CUT_DIR = os.path.join(INTERIM_DATA_DIR, 'cut_recordings')
 
 MODEL_DIR = os.path.join(ROOT_DIR, 'models')
 REPORTS_DIR = os.path.join(ROOT_DIR, 'reports')
+STATISTICS_DIR = os.path.join(REPORTS_DIR, 'statistics')
 FIGURES_DIR = os.path.join(REPORTS_DIR, 'figures')
 
 # test

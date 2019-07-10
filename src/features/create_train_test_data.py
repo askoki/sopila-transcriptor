@@ -3,11 +3,12 @@ import sys
 sys.path.insert(1, os.path.join(sys.path[0], '..', '..'))
 sys.path.insert(1, os.path.join(sys.path[0], '..'))
 
-from settings import PROCESSED_DATA_DIR
+from settings import PROCESSED_DATA_DIR, UNFILTERED_PATH
 from features.helpers.data_helpers import get_random_forest_data
 from sklearn.model_selection import train_test_split
 import h5py
 
+# X, y = get_random_forest_data(UNFILTERED_PATH)
 X, y = get_random_forest_data()
 x_train, x_test, y_train, y_test = train_test_split(X, y, random_state=42)
 
@@ -44,4 +45,3 @@ processed_data_file.create_dataset(
     data=y_test,
     dtype=dt
 )
-

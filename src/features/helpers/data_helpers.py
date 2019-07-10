@@ -1,12 +1,15 @@
 import os
 import sys
 sys.path.insert(0, os.path.join(sys.path[0], '..', '..'))
-from settings import FIGURES_DIR, AMPLITUDE_ARRAY_PATH, PROCESSED_DATA_DIR
+from settings import FIGURES_DIR, AMPLITUDE_ARRAY_PATH, \
+    PROCESSED_DATA_DIR, STATISTICS_DIR
 
 import re
 import itertools
 import h5py
 import numpy as np
+import matplotlib as mpl
+mpl.use('TkAgg')
 import matplotlib.pyplot as plt
 
 
@@ -61,6 +64,48 @@ def plot_model_statistics(title, train_score, test_score, data_name):
         dpi=300
     )
     plt.close()
+
+
+def calculate_f1(precision, recall):
+    if precision + recall == 0:
+        return None
+    return (2 * precision * recall) / (precision + recall)
+
+
+def write_model_statistics(title, metrics_dict, training_shape, test_shape, parameters):
+    """
+    title -> string reporesenting name of the model
+    metrics_dict -> dict containing accuracy, precision and recall metrics
+    training_shape, test_shape -> tuple containing training and test data size
+    parameters -> dict containing tested parameters in and iteration
+    """
+    with open(os.path.join(STATISTICS_DIR, title + '.txt'), 'w+') as f:
+        print('n_estimators ' + str(parameters[0]), file=f)
+        print('criterion ' + str(parameters[1]), file=f)
+        print('bootstrap ' + str(parameters[2]), file=f)
+        print('min_samples_split ' + str(parameters[3]), file=f)
+        print('min_samples_leaf ' + str(parameters[4]), file=f)
+        print('max_features ' + str(parameters[5]), file=f)
+        print('max_depth ' + str(parameters[6]), file=f)
+
+        print('Training_shape ' + str(training_shape.shape), file=f)
+        print('Test_shape ' + str(test_shape.shape), file=f)
+        print('Training_accuracy ' + str(metrics_dict['acc_train']), file=f)
+        print('Training_precision ' +
+              str(metrics_dict['precision_train']), file=f)
+        print('Training_recall ' + str(metrics_dict['recall_train']), file=f)
+        print('Training_F1 ' + str(calculate_f1(
+            metrics_dict['precision_train'],
+            metrics_dict['recall_train'])), file=f
+        )
+        print('Test_accuracy ' + str(metrics_dict['acc_test']), file=f)
+        print('Test_precision ' +
+              str(metrics_dict['precision_test']), file=f)
+        print('Test_recall ' + str(metrics_dict['recall_test']), file=f)
+        print('Test_F1 ' + str(calculate_f1(
+            metrics_dict['precision_test'],
+            metrics_dict['recall_test'])), file=f
+        )
 
 
 def plot_confusion_matrix(cm, classes, matrix_name, normalize=False, title='', cmap=plt.cm.Blues):
@@ -125,28 +170,32 @@ def get_min_data_size():
     return min_value
 
 
-def get_random_forest_data():
-    '''
+def get_random_forest_data(dir_path=AMPLITUDE_ARRAY_PATH):
+    """
     Returns tuple containing list of all amlitudes (X) and all_labels (y)
-    '''
-    all_amplitudes = []
+    """
+    all_values = []
     all_labels = []
     array_size = get_min_data_size()
-    for array_file in os.listdir(AMPLITUDE_ARRAY_PATH):
-        file = h5py.File(os.path.join(AMPLITUDE_ARRAY_PATH, array_file), 'r')
+    for array_file in os.listdir(dir_path):
+        file = h5py.File(os.path.join(dir_path, array_file), 'r')
 
-        values = file['amplitudes'].value[:array_size]
+        if dir_path != AMPLITUDE_ARRAY_PATH:
+            values = file['waveform'].value[:array_size]
+        else:
+            values = file['amplitudes'].value[:array_size]
         labels = file['labels'].value[:array_size]
         # # m * n matrix
-        all_amplitudes.extend(values)
+        all_values.extend(values)
         # # m * 1 vector
         all_labels.extend(labels)
         file.close()
-    return (all_amplitudes, all_labels)
+    return (all_values, all_labels)
 
 
 def get_train_data():
-    file = h5py.File(os.path.join(PROCESSED_DATA_DIR, 'processed_data.hdf5'), 'r')
+    file = h5py.File(os.path.join(
+        PROCESSED_DATA_DIR, 'processed_data.hdf5'), 'r')
 
     return (
         file['x_train'].value,
@@ -155,7 +204,8 @@ def get_train_data():
 
 
 def get_test_data():
-    file = h5py.File(os.path.join(PROCESSED_DATA_DIR, 'processed_data.hdf5'), 'r')
+    file = h5py.File(os.path.join(
+        PROCESSED_DATA_DIR, 'processed_data.hdf5'), 'r')
 
     return (
         file['x_test'].value,
