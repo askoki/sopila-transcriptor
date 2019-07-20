@@ -12,6 +12,8 @@ from settings import RAW_DATA_DIR, INTERIM_DATA_DIR, \
     TRAINING_DIR, TEST_DIR, VALIDATION_DIR, \
     STATISTICS_DIR, ML_MODELS, FIGURES_DIR
 
+# delete contents of raw folder
+clear_dir(RAW_DATA_DIR)
 
 # create base data folder structure
 directories_to_create = [
@@ -33,21 +35,21 @@ for directory in directories_to_create:
     for model in ML_MODELS:
         create_directory(os.path.join(directory, model['name']))
 
-# delete contents of raw folder
-clear_dir(RAW_DATA_DIR)
 
-FILE_ID = '1SACjFsfdUZKVmBwV0bOMt9ni6B6DR6Dt'
-gdd.download_file_from_google_drive(
-    file_id=FILE_ID,
-    dest_path=os.path.join(RAW_DATA_DIR, 'data.zip'),
-    unzip=True
-)
+for i, model in enumerate(ML_MODELS):
+    print("Downloading %d/%d" % (i + 1, len(ML_MODELS)))
+    FILE_ID = '1SACjFsfdUZKVmBwV0bOMt9ni6B6DR6Dt'
+    model_dir = os.path.join(RAW_DATA_DIR, model['name'])
+    gdd.download_file_from_google_drive(
+        file_id=FILE_ID,
+        dest_path=os.path.join(model_dir, 'data.zip'),
+        unzip=True
+    )
 
-print("Removing downloaded zip file ...")
-os.remove(os.path.join(RAW_DATA_DIR, 'data.zip'))
-
-
-subprocess.call(
-    ['python', 'merge_audio_data.py'],
-    cwd="../features/"
-)
+    print("Removing downloaded zip file ...")
+    os.remove(os.path.join(model_dir, 'data.zip'))
+    if model['voice_type'] == 'poly':
+        subprocess.call(
+            ['python', 'merge_audio_data.py', model_dir],
+            cwd="../features/"
+        )

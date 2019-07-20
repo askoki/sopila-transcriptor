@@ -23,7 +23,6 @@ STATISTICS_DIR = os.path.join(REPORTS_DIR, 'statistics')
 
 # test
 REAL_DATA_DIR = os.path.join(DATA_DIR, 'real_data')
-
 REAL_DATA_CUT = os.path.join(REAL_DATA_DIR, 'cut')
 REAL_DATA_RAW = os.path.join(REAL_DATA_DIR, 'raw')
 REAL_DATA_AMP = os.path.join(REAL_DATA_DIR, 'amp')

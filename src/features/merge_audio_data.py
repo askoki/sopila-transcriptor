@@ -1,11 +1,10 @@
 import os
 import sys
-sys.path.insert(1, os.path.join(sys.path[0], '..', '..'))
-
 from helpers.file_helpers import create_directory, clear_dir
 from pydub import AudioSegment
 from os import listdir
-from settings import RAW_DATA_DIR
+
+DATA_SOURCE = str(sys.argv[1])
 
 
 def get_sopila_dirs(sopila_label):
@@ -14,7 +13,7 @@ def get_sopila_dirs(sopila_label):
     be extracted.
     """
     sopila_dirs = []
-    recordings_folders = listdir(os.path.join(RAW_DATA_DIR))
+    recordings_folders = listdir(os.path.join(DATA_SOURCE))
     recordings_folders.sort()
     for folder in recordings_folders:
         is_silence = 'silence' in folder
@@ -29,7 +28,7 @@ def append_audio_files(folder_files, folder_name):
     combined = AudioSegment.empty()
     for filename in folder_files:
         file = AudioSegment.from_wav(
-            os.path.join(RAW_DATA_DIR, folder_name, filename)
+            os.path.join(DATA_SOURCE, folder_name, filename)
         )
 
         combined += file
@@ -48,10 +47,11 @@ def merge_audio_files(file1, file2, export_dirname):
 
     # v__ is added in order to put mixed recordings after single ones
     # but before silence
-    export_dir = os.path.join(RAW_DATA_DIR, 'vv_' + export_dirname)
+    export_dir = os.path.join(DATA_SOURCE, 'vv_' + export_dirname)
     create_directory(export_dir)
     clear_dir(export_dir)
-    combined.export(os.path.join(export_dir, export_dirname + '.wav'), format='wav')
+    combined.export(os.path.join(
+        export_dir, export_dirname + '.wav'), format='wav')
 
 mala_dirs = get_sopila_dirs('m')
 vela_dirs = get_sopila_dirs('v')
@@ -59,14 +59,14 @@ vela_dirs = get_sopila_dirs('v')
 for mala_dir in mala_dirs:
 
     combined_mala = append_audio_files(
-        listdir(os.path.join(RAW_DATA_DIR, mala_dir)),
+        listdir(os.path.join(DATA_SOURCE, mala_dir)),
         mala_dir
     )
 
     for vela_dir in vela_dirs:
 
         combined_vela = append_audio_files(
-            listdir(os.path.join(RAW_DATA_DIR, vela_dir)),
+            listdir(os.path.join(DATA_SOURCE, vela_dir)),
             vela_dir
         )
         merge_audio_files(combined_mala, combined_vela, mala_dir + vela_dir)
