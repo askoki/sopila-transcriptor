@@ -9,7 +9,7 @@ sys.path.insert(1, os.path.join(sys.path[0], '..'))
 from features.helpers.file_helpers import clear_dir, create_directories, create_directory
 from settings import RAW_DATA_DIR, INTERIM_DATA_DIR, \
     PROCESSED_DATA_DIR, AMPLITUDE_ARRAY_PATH, CUT_DIR, \
-    TRAINING_DIR, TEST_DIR, VALIDATION_DIR, SHEETS_DIR, \
+    TRAINING_DIR, TEST_DIR, VALIDATION_DIR, \
     STATISTICS_DIR, ML_MODELS, FIGURES_DIR
 
 
@@ -23,7 +23,6 @@ directories_to_create = [
     TRAINING_DIR,
     VALIDATION_DIR,
     TEST_DIR,
-    SHEETS_DIR,
     FIGURES_DIR,
     STATISTICS_DIR
 ]
@@ -32,7 +31,7 @@ directories_to_create = [
 create_directories(directories_to_create)
 for directory in directories_to_create:
     for model in ML_MODELS:
-        create_directory(os.path.join(directory, model))
+        create_directory(os.path.join(directory, model['name']))
 
 # delete contents of raw folder
 clear_dir(RAW_DATA_DIR)

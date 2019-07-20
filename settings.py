@@ -32,8 +32,54 @@ REAL_DATA_PREDICTIONS = os.path.join(REAL_DATA_DIR, 'predictions')
 SHEETS_DIR = os.path.join(REPORTS_DIR, 'sheets')
 
 ML_MODELS = [
-    'mono_rf', 'mono_rf_dft', 'mono_cnn', 'mono_cnn_dft',
-    'poly_rf', 'poly_rf_dft', 'poly_cnn', 'poly_cnn_dft'
+    {
+        'name': 'mono_rf',
+        'model_type': 'rf',
+        'voice_type': 'mono',
+        'unfiltered': True
+    },
+    {
+        'name': 'mono_rf_dft',
+        'model_type': 'rf',
+        'voice_type': 'mono',
+        'unfiltered': False
+    },
+    {
+        'name': 'mono_cnn',
+        'model_type': 'cnn',
+        'voice_type': 'mono',
+        'unfiltered': True
+    },
+    {
+        'name': 'mono_cnn_dft',
+        'model_type': 'cnn',
+        'voice_type': 'mono',
+        'unfiltered': False
+    },
+    {
+        'name': 'poly_rf',
+        'model_type': 'rf',
+        'voice_type': 'poly',
+        'unfiltered': True
+    },
+    {
+        'name': 'poly_rf_dft',
+        'model_type': 'rf',
+        'voice_type': 'poly',
+        'unfiltered': False
+    },
+    {
+        'name': 'poly_cnn',
+        'model_type': 'cnn',
+        'voice_type': 'poly',
+        'unfiltered': True
+    },
+    {
+        'name': 'poly_cnn_dft',
+        'model_type': 'cnn',
+        'voice_type': 'poly',
+        'unfiltered': False
+    },
 ]
 
 with open(os.path.join(ROOT_DIR, 'secrets.json')) as f:
