@@ -12,21 +12,20 @@ def get_model(input_shape, num_classes, cnn_layers=1, num_filters=16, filter_siz
     model = Sequential()
     # cnn_layers 1, num_filters 64, filter size 3, hidden layers 64 pada
     if num_filters >= 64:
-        model.add(Conv1D(
-            32,
-            kernel_size=filter_size,
-            activation='relu',
-            input_shape=input_shape
-        ))
+        first_layer = 32
     else:
-        model.add(Conv1D(
-            num_filters,
-            kernel_size=filter_size,
-            activation='relu',
-            input_shape=input_shape
-        ))
+        first_layer = num_filters
+    
+    
+    model.add(Conv1D(
+        first_layer,
+        kernel_size=filter_size,
+        activation='relu',
+        input_shape=input_shape
+    ))
+   
     model.add(MaxPooling1D(2))
-    if cnn_layers >= 2:
+    for layers in range(cnn_layers - 1):
         model.add(Conv1D(num_filters, filter_size, activation='relu'))
         model.add(MaxPooling1D(2))
     model.add(Dropout(0.25))

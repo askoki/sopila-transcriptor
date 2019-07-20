@@ -6,6 +6,7 @@ ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(ROOT_DIR, 'data')
 RAW_DATA_DIR = os.path.join(DATA_DIR, 'raw')
 INTERIM_DATA_DIR = os.path.join(DATA_DIR, 'interim')
+UNFILTERED_PATH = os.path.join(INTERIM_DATA_DIR, 'unfiltered_recordings')
 PROCESSED_DATA_DIR  = os.path.join(DATA_DIR, 'processed')
 
 AMPLITUDE_ARRAY_PATH = os.path.join(INTERIM_DATA_DIR, 'amplitude_array')

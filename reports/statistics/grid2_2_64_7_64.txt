@@ -1,0 +1,15 @@
+Cnn_layers 2
+Num_filters 64
+Filter_size 7
+Hidden_layers 64
+Input_shape (85299, 441, 1)
+Training_data 68240
+Validation_data 17059
+Training_accuracy 0.5556417882498353
+Training_precision 0.609598861049967
+Training_recall 0.18055530809204304
+Training_F1 0.2785945185581972
+Validation_accuracy 0.8215709328651428
+Validation_precision 0.7070063694266014
+Validation_recall 0.8763157894734536
+Validation_F1 0.7826086956519899

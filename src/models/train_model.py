@@ -40,8 +40,12 @@ y_train = keras.utils.to_categorical(y_train, num_classes=num_classes, dtype='fl
 
 validation_split = 0.2
 
-cnn_layers = [1, 2]
-num_filters = [16, 32, 64]
+#cnn_layers = [1, 2]
+#num_filters = [16, 32, 64]
+#filter_size = [3, 5, 7]
+#hidden_layers = [64, 128]
+cnn_layers = [5]
+num_filters = [32, 64, 128]
 filter_size = [3, 5, 7]
 hidden_layers = [64, 128]
 
@@ -50,8 +54,9 @@ for i, parameters in enumerate(product(param_cartesian_product)):
     parameters = parameters[0]
     print('Parameters cnn_layers %s, num_filters %s, filter size %s, hidden layers %s' % 
           (parameters[0], parameters[1], parameters[2], parameters[3]))
-    if i <= 11:
-        continue
+    
+#    if i <= 5:
+#        continue
     
     model = get_model(
             (n_cols, 1), 
@@ -61,6 +66,7 @@ for i, parameters in enumerate(product(param_cartesian_product)):
             filter_size=parameters[2],
             hidden_layers=parameters[3]
     )
+#    import pdb; pdb.set_trace()
     if USE_GPU:
         model = multi_gpu_model(model, gpus=[0, 1, 2])
     
@@ -72,21 +78,25 @@ for i, parameters in enumerate(product(param_cartesian_product)):
     
     print('Before:')
     print(datetime.datetime.now())
-    history = model.fit(
-        x=x_train,
-        y=y_train,
-        validation_split=validation_split,
-        epochs=epochs,
-        verbose=1,
-        shuffle=True,
-        steps_per_epoch=batch_size,
-        validation_steps=batch_size,
-        callbacks=[
-            keras.callbacks.EarlyStopping(
-                monitor='val_loss', min_delta=0.1
-            )
-        ]
-    )
+    try:
+        history = model.fit(
+            x=x_train,
+            y=y_train,
+            validation_split=validation_split,
+            epochs=epochs,
+            verbose=1,
+            shuffle=True,
+            steps_per_epoch=batch_size,
+            validation_steps=batch_size,
+            callbacks=[
+                keras.callbacks.EarlyStopping(
+                    monitor='val_loss', min_delta=0.1
+                )
+            ]
+        )
+    except MemoryError as e:
+        print("OOM error\n" + e)
+        continue
     print('After:')
     print(datetime.datetime.now())
     
