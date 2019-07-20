@@ -11,7 +11,31 @@ from helpers.data_helpers import natural_sort, get_folder_class_index
 from pydub import AudioSegment
 from pydub.utils import get_array_type
 from os import listdir
-from settings import NUMBER_OF_CORES, CUT_DIR, UNFILTERED_PATH
+from settings import NUMBER_OF_CORES
+
+if not sys.argv[1]:
+    print('Enter model name defined in settings.py')
+    sys.exit()
+
+ML_MODEL = str(sys.argv[1])
+
+if not sys.argv[2]:
+    print('Enter path of cut data dir')
+    sys.exit()
+
+CUT_DIR = os.path.join(str(sys.argv[2]), ML_MODEL)
+
+if not sys.argv[3]:
+    print('Enter amplitude array path')
+    sys.exit()
+
+UNFILTERED_PATH = os.path.join(str(sys.argv[3]), ML_MODEL)
+
+if not sys.argv[4]:
+    print('Enter boolean is model random forest or CNN')
+    sys.exit()
+
+is_random_forest = (sys.argv[4] == 'True')
 
 
 def create_folder_raw_array(folder):
@@ -47,20 +71,28 @@ def create_folder_raw_array(folder):
         dtype='i'
     )
 
-    # PY3 unicode
     folder_index = get_folder_class_index(folder)
-    array_file.create_dataset(
-        'labels',
-        data=np.transpose([folder_index] * len(all_data)),
-        dtype='i'
-    )
+    if is_random_forest:
+        # PY3 unicode
+        dt = h5py.special_dtype(vlen=str)
+        array_file.create_dataset(
+            'labels',
+            data=np.transpose([folder.encode('utf8')] * len(all_data)),
+            dtype=dt
+        )
+    else:
+        array_file.create_dataset(
+            'labels',
+            data=np.transpose([folder_index] * len(all_data)),
+            dtype='i'
+        )
 
 
 # -------- PARALLELIZE ----------
 from multiprocessing import Pool
 
 if __name__ == '__main__':
-    # delete old amplitude array data (if exists)
+    # delete old unfiltered data (if exists)
     clear_dir(UNFILTERED_PATH)
 
     recordings_folders = listdir(os.path.join(CUT_DIR))
