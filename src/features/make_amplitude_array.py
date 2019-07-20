@@ -66,6 +66,13 @@ def create_folder_amplitude_array(folder):
         dtype='f'
     )
 
+    # folder_index = get_folder_class_index(folder)
+    # array_file.create_dataset(
+    #     'labels',
+    #     data=np.transpose([folder_index] * len(all_norm_amplitudes)),
+    #     dtype='i'
+    # )
+
     # PY3 unicode
     # dt = h5py.special_dtype(vlen=str) #.encode('utf8')
     folder_index = get_folder_class_index(folder)

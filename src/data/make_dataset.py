@@ -2,15 +2,15 @@
 import os
 import sys
 import subprocess
+from google_drive_downloader import GoogleDriveDownloader as gdd
 sys.path.insert(1, os.path.join(sys.path[0], '..', '..'))
 sys.path.insert(1, os.path.join(sys.path[0], '..'))
 
-
-from google_drive_downloader import GoogleDriveDownloader as gdd
-from features.helpers.file_helpers import clear_dir, create_directories
+from features.helpers.file_helpers import clear_dir, create_directories, create_directory
 from settings import RAW_DATA_DIR, INTERIM_DATA_DIR, \
     PROCESSED_DATA_DIR, AMPLITUDE_ARRAY_PATH, CUT_DIR, \
-    TRAINING_DIR, TEST_DIR, VALIDATION_DIR, STATISTICS_DIR
+    TRAINING_DIR, TEST_DIR, VALIDATION_DIR, SHEETS_DIR, \
+    STATISTICS_DIR, ML_MODELS, FIGURES_DIR
 
 
 # create base data folder structure
@@ -23,11 +23,16 @@ directories_to_create = [
     TRAINING_DIR,
     VALIDATION_DIR,
     TEST_DIR,
+    SHEETS_DIR,
+    FIGURES_DIR,
     STATISTICS_DIR
 ]
 
 # create directories in data folder
 create_directories(directories_to_create)
+for directory in directories_to_create:
+    for model in ML_MODELS:
+        create_directory(os.path.join(directory, model))
 
 # delete contents of raw folder
 clear_dir(RAW_DATA_DIR)

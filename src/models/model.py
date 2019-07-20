@@ -15,15 +15,14 @@ def get_model(input_shape, num_classes, cnn_layers=1, num_filters=16, filter_siz
         first_layer = 32
     else:
         first_layer = num_filters
-    
-    
+
     model.add(Conv1D(
         first_layer,
         kernel_size=filter_size,
         activation='relu',
         input_shape=input_shape
     ))
-   
+
     model.add(MaxPooling1D(2))
     for layers in range(cnn_layers - 1):
         model.add(Conv1D(num_filters, filter_size, activation='relu'))

@@ -9,10 +9,10 @@ from settings import RAW_DATA_DIR
 
 
 def get_sopila_dirs(sopila_label):
-    '''
+    """
     sopila_label -> string which determines which sopila folders will
     be extracted.
-    '''
+    """
     sopila_dirs = []
     recordings_folders = listdir(os.path.join(RAW_DATA_DIR))
     recordings_folders.sort()
@@ -37,9 +37,9 @@ def append_audio_files(folder_files, folder_name):
 
 
 def merge_audio_files(file1, file2, export_dirname):
-    '''
+    """
     file1, file2 -> must be objects of AudioSegment
-    '''
+    """
     # if one file is shorter than oder then just cut off at shorter length
     if file1.duration_seconds < file2.duration_seconds:
         combined = file1.overlay(file2)

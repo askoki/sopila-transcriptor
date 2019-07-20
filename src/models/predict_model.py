@@ -30,7 +30,7 @@ x_test, y_test = get_test_data()
 
 n_rows, n_cols = x_test.shape
 
-batch_size = 50
+batch_size = 1000
 
 class_labels = os.listdir(CUT_DIR)
 class_labels.sort()

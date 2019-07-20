@@ -1,14 +1,14 @@
 import os
 import sys
-sys.path.insert(0, os.path.join(sys.path[0], '..', '..'))
-from settings import FIGURES_DIR, AMPLITUDE_ARRAY_PATH, PROCESSED_DATA_DIR, \
-CUT_DIR, STATISTICS_DIR
-
 import re
 import itertools
 import h5py
 import numpy as np
 import matplotlib.pyplot as plt
+
+sys.path.insert(0, os.path.join(sys.path[0], '..', '..'))
+from settings import FIGURES_DIR, AMPLITUDE_ARRAY_PATH, PROCESSED_DATA_DIR, \
+    CUT_DIR, STATISTICS_DIR
 
 
 def natural_sort(l):
@@ -41,25 +41,29 @@ def write_model_statistics(title, history_dict, input_shape, validation_split, p
         print('Num_filters ' + str(parameters[1]), file=f)
         print('Filter_size ' + str(parameters[2]), file=f)
         print('Hidden_layers ' + str(parameters[3]), file=f)
-        
+
         print('Input_shape ' + str(input_shape), file=f)
         print('Training_data ' + str(training_num), file=f)
         print('Validation_data ' + str(validation_num), file=f)
         print('Training_accuracy ' + str(history_dict['acc'][0]), file=f)
-        print('Training_precision ' + str(history_dict['precision'][0]), file=f)
+        print('Training_precision ' +
+              str(history_dict['precision'][0]), file=f)
         print('Training_recall ' + str(history_dict['recall'][0]), file=f)
         print('Training_F1 ' + str(calculate_f1(
-                history_dict['precision'][0], 
-                history_dict['recall'][0])), file=f
+            history_dict['precision'][0],
+            history_dict['recall'][0])), file=f
         )
         print('Validation_accuracy ' + str(history_dict['val_acc'][0]), file=f)
-        print('Validation_precision ' + str(history_dict['val_precision'][0]), file=f)
-        print('Validation_recall ' + str(history_dict['val_recall'][0]), file=f)
+        print('Validation_precision ' +
+              str(history_dict['val_precision'][0]), file=f)
+        print('Validation_recall ' +
+              str(history_dict['val_recall'][0]), file=f)
         print('Validation_F1 ' + str(calculate_f1(
-                history_dict['val_precision'][0], 
-                history_dict['val_recall'][0])), file=f
+            history_dict['val_precision'][0],
+            history_dict['val_recall'][0])), file=f
         )
-    
+
+
 def plot_model_statistics(title, train, valid, data_name):
     """
     title -> string reporesenting figure title
@@ -100,7 +104,7 @@ def plot_confusion_matrix(cm, classes, matrix_name, normalize=False, title='', c
 
     fig = plt.figure("Confusion matrix")
     fig.set_size_inches(22, 22)
-    
+
     plt.imshow(cm, interpolation='nearest', cmap=cmap)
     plt.title(title)
     plt.colorbar()
@@ -128,8 +132,8 @@ def plot_confusion_matrix(cm, classes, matrix_name, normalize=False, title='', c
         dpi=500
     )
     plt.close()
-    
-    
+
+
 def get_min_data_size():
     """
     Returns size of matrix with lowest size (needed for balanced dataset)
@@ -167,27 +171,30 @@ def get_random_forest_data(dir_path=AMPLITUDE_ARRAY_PATH):
 
 
 def get_train_data():
-    file = h5py.File(os.path.join(PROCESSED_DATA_DIR, 'processed_data.hdf5'), 'r')
+    file = h5py.File(os.path.join(
+        PROCESSED_DATA_DIR, 'processed_data.hdf5'), 'r')
 
     return (
         file['x_train'].value,
         file['y_train'].value,
     )
-    
+
 
 def get_test_data():
-    file = h5py.File(os.path.join(PROCESSED_DATA_DIR, 'processed_data.hdf5'), 'r')
+    file = h5py.File(os.path.join(
+        PROCESSED_DATA_DIR, 'processed_data.hdf5'), 'r')
 
     return (
         file['x_test'].value,
         file['y_test'].value,
     )
 
+
 def get_folder_class_index(folder_name):
-    
+
     class_labels = os.listdir(CUT_DIR)
     class_labels.sort()
-    
+
     try:
         return_class = class_labels.index(folder_name)
     except ValueError:

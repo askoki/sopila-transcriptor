@@ -7,7 +7,7 @@ DATA_DIR = os.path.join(ROOT_DIR, 'data')
 RAW_DATA_DIR = os.path.join(DATA_DIR, 'raw')
 INTERIM_DATA_DIR = os.path.join(DATA_DIR, 'interim')
 UNFILTERED_PATH = os.path.join(INTERIM_DATA_DIR, 'unfiltered_recordings')
-PROCESSED_DATA_DIR  = os.path.join(DATA_DIR, 'processed')
+PROCESSED_DATA_DIR = os.path.join(DATA_DIR, 'processed')
 
 AMPLITUDE_ARRAY_PATH = os.path.join(INTERIM_DATA_DIR, 'amplitude_array')
 CUT_DIR = os.path.join(INTERIM_DATA_DIR, 'cut_recordings')
@@ -31,14 +31,22 @@ REAL_DATA_PREDICTIONS = os.path.join(REAL_DATA_DIR, 'predictions')
 
 SHEETS_DIR = os.path.join(REPORTS_DIR, 'sheets')
 
+ML_MODELS = [
+    'mono_rf', 'mono_rf_dft', 'mono_cnn', 'mono_cnn_dft',
+    'poly_rf', 'poly_rf_dft', 'poly_cnn', 'poly_cnn_dft'
+]
+
 with open(os.path.join(ROOT_DIR, 'secrets.json')) as f:
     secrets = json.loads(f.read())
+
 
 def get_secret(setting, secrets=secrets):
     try:
         return secrets[setting]
     except KeyError:
         err = "Set the %s in secrets.json file." % setting
+        print(err)
+
 
 NUMBER_OF_CORES = get_secret("NUMBER_OF_CORES")
 USE_GPU = get_secret("USE_GPU")
@@ -64,6 +72,7 @@ ABJAD_TONES = {
 
 BEATS_PER_MINUTE = 60
 BEATS_PER_SECOND = BEATS_PER_MINUTE / 60
-# timeframe length in s
+
+# time frame length in s
 TIMEFRAME_LENGTH = 0.04
 BEAT = BEATS_PER_SECOND / TIMEFRAME_LENGTH
