@@ -1,22 +1,40 @@
 # !/usr/bin/env python
+import faulthandler; faulthandler.enable()
 import os
 import sys
 sys.path.insert(1, os.path.join(sys.path[0], '..', '..'))
 
+import h5py
+import numpy as np
 from helpers.file_helpers import create_directory, clear_dir
 from helpers.data_helpers import get_folder_class_index, natural_sort
 from pydub import AudioSegment
 from os import listdir
 from settings import NUMBER_OF_CORES
 
-# alternative dir
-if len(sys.argv) > 1:
-    from settings import REAL_DATA_CUT as CUT_DIR, REAL_DATA_AMP as AMPLITUDE_ARRAY_PATH
-else:
-    from settings import CUT_DIR, AMPLITUDE_ARRAY_PATH
+if not sys.argv[1]:
+    print('Enter model name defined in settings.py')
+    sys.exit()
 
-import h5py
-import numpy as np
+ML_MODEL = str(sys.argv[1])
+
+if not sys.argv[2]:
+    print('Enter path of cut data dir')
+    sys.exit()
+
+CUT_DIR = os.path.join(str(sys.argv[2]), ML_MODEL)
+
+if not sys.argv[3]:
+    print('Enter amplitude array path')
+    sys.exit()
+
+AMPLITUDE_ARRAY_PATH = os.path.join(str(sys.argv[3]), ML_MODEL)
+
+if not sys.argv[4]:
+    print('Enter boolean is model random forest or CNN')
+    sys.exit()
+
+is_random_forest = (sys.argv[4] == 'True')
 
 
 def normalize_amplitudes(amplitudes):
@@ -39,10 +57,13 @@ def normalize_amplitudes(amplitudes):
 def create_folder_amplitude_array(folder):
     folder_files = listdir(os.path.join(CUT_DIR, folder))
     folder_files = natural_sort(folder_files)
-    
+
     create_directory(os.path.join(AMPLITUDE_ARRAY_PATH))
 
-    array_file = h5py.File(os.path.join(AMPLITUDE_ARRAY_PATH, folder + '.hdf5'), 'w')
+    array_file = h5py.File(os.path.join(
+        AMPLITUDE_ARRAY_PATH, folder + '.hdf5'),
+        'w'
+    )
 
     number_of_images = len(folder_files)
     all_norm_amplitudes = []
@@ -52,7 +73,10 @@ def create_folder_amplitude_array(folder):
         print('\rFolder: %s %d/%d\r' % (folder, i, number_of_images))
 
         # read in a wav file
-        data = AudioSegment.from_file(os.path.join(CUT_DIR, folder, file), format='wav')
+        data = AudioSegment.from_file(
+            os.path.join(CUT_DIR, folder, file),
+            format='wav'
+        )
 
         fft = np.fft.fft(np.array(data.get_array_of_samples()))
 
@@ -66,21 +90,21 @@ def create_folder_amplitude_array(folder):
         dtype='f'
     )
 
-    # folder_index = get_folder_class_index(folder)
-    # array_file.create_dataset(
-    #     'labels',
-    #     data=np.transpose([folder_index] * len(all_norm_amplitudes)),
-    #     dtype='i'
-    # )
-
-    # PY3 unicode
-    # dt = h5py.special_dtype(vlen=str) #.encode('utf8')
     folder_index = get_folder_class_index(folder)
-    array_file.create_dataset(
-        'labels',
-        data=np.transpose([folder_index] * len(all_norm_amplitudes)),
-        dtype='i'
-    )
+    if is_random_forest:
+        # PY3 unicode
+        dt = h5py.special_dtype(vlen=str)
+        array_file.create_dataset(
+            'labels',
+            data=np.transpose([folder.encode('utf8')] * len(all_norm_amplitudes)),
+            dtype=dt
+        )
+    else:
+        array_file.create_dataset(
+            'labels',
+            data=np.transpose([folder_index] * len(all_norm_amplitudes)),
+            dtype='i'
+        )
 
 
 # -------- PARALLELIZE ----------
