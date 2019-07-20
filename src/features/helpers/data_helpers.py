@@ -4,10 +4,12 @@ import re
 import itertools
 import h5py
 import numpy as np
+import matplotlib as mpl
+mpl.use('TkAgg')
 import matplotlib.pyplot as plt
 
 sys.path.insert(0, os.path.join(sys.path[0], '..', '..'))
-from settings import FIGURES_DIR, AMPLITUDE_ARRAY_PATH, PROCESSED_DATA_DIR, \
+from settings import FIGURES_DIR, PROCESSED_DATA_DIR, \
     CUT_DIR, STATISTICS_DIR
 
 
@@ -134,37 +136,50 @@ def plot_confusion_matrix(cm, classes, matrix_name, normalize=False, title='', c
     plt.close()
 
 
-def get_min_data_size():
+def get_min_data_size(data_path, is_unfiltered):
     """
+    data_path -> Path to the processed (but not splitted) data
+    is_unfiltered -> boolean value determining weather data 
+    was preprocessed or not
+
     Returns size of matrix with lowest size (needed for balanced dataset)
     """
     min_value = sys.maxsize
-    for array_file in os.listdir(AMPLITUDE_ARRAY_PATH):
-        file = h5py.File(os.path.join(AMPLITUDE_ARRAY_PATH, array_file), 'r')
-        if file['amplitudes'].shape[0] < min_value:
-            min_value = file['amplitudes'].shape[0]
+
+    dict_key = 'waveform' if is_unfiltered else 'amplitudes'
+    for array_file in os.listdir(data_path):
+        file = h5py.File(os.path.join(data_path, array_file), 'r')
+        dict_obj = file['waveform'] if is_unfiltered else file['amplitudes']
+        if dict_obj.shape[0] < min_value:
+            min_value = dict_obj.shape[0]
         file.close()
     return min_value
 
 
-def get_random_forest_data(dir_path=AMPLITUDE_ARRAY_PATH):
+def get_data(data_path, is_unfiltered):
     """
+    data_path -> Path to the processed (but not splitted) data
+    is_unfiltered -> boolean value determining weather data 
+    was preprocessed or not
+
     Returns tuple containing list of all amlitudes (X) and all_labels (y)
     """
     all_values = []
     all_labels = []
-    array_size = get_min_data_size()
-    for array_file in os.listdir(dir_path):
-        file = h5py.File(os.path.join(dir_path, array_file), 'r')
+    array_size = get_min_data_size(data_path, is_unfiltered)
+    for array_file in os.listdir(data_path):
+        file = h5py.File(os.path.join(data_path, array_file), 'r')
 
-        if dir_path != AMPLITUDE_ARRAY_PATH:
+        if is_unfiltered:
             values = file['waveform'].value[:array_size]
         else:
             values = file['amplitudes'].value[:array_size]
         labels = file['labels'].value[:array_size]
-        # # m * n matrix
+
+        # m * n matrix
         all_values.extend(values)
-        # # m * 1 vector
+
+        # m * 1 vector
         all_labels.extend(labels)
         file.close()
     return (all_values, all_labels)
