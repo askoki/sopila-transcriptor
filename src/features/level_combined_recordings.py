@@ -6,11 +6,22 @@ from pydub import AudioSegment
 from settings import NUMBER_OF_CORES
 from os import listdir
 
-# alternative dir
-if len(sys.argv) > 1:
-    from settings import REAL_DATA_CUT as CUT_DIR
-else:
-    from settings import CUT_DIR
+if not sys.argv[1]:
+    print('Enter path of cut dir')
+    sys.exit()
+
+CUT_DIR = str(sys.argv[1])
+
+
+def get_gain(l_ch, r_ch):
+    """
+    l_ch -> left channel, array of int values
+    r_ch -> right channel, array of int values
+
+    returns compare left and right channel in dBFS
+    """
+    diff = abs(l_ch - r_ch)
+    return 0 if l_ch > r_ch else diff
 
 
 def level_recordings(folder):
@@ -22,7 +33,9 @@ def level_recordings(folder):
         print('\rFolder: %s %d/%d\r' % (folder, i, number_of_audio_files))
 
         # read in a wav file
-        data = AudioSegment.from_file(os.path.join(CUT_DIR, folder, file), format='wav')
+        data = AudioSegment.from_file(
+            os.path.join(CUT_DIR, folder, file), format='wav'
+        )
 
         # skip non stereo (uncombined) files
         if data.channels <= 1:
@@ -30,10 +43,6 @@ def level_recordings(folder):
             return
 
         left, right = data.split_to_mono()
-        diff = abs(left.dBFS - right.dBFS)
-
-        # compare left and right channel in dBFS
-        get_gain = lambda l_ch, r_ch: 0 if l_ch > r_ch else diff
 
         left = left.apply_gain(get_gain(left.dBFS, right.dBFS))
         right = right.apply_gain(get_gain(right.dBFS, left.dBFS))
