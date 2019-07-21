@@ -32,49 +32,57 @@ ML_MODELS = [
         'name': 'mono_rf',
         'model_type': 'rf',
         'voice_type': 'mono',
-        'unfiltered': True
+        'unfiltered': True,
+        'best_params': '900_gini_2_1_auto_80_False'
     },
     {
         'name': 'mono_rf_dft',
         'model_type': 'rf',
         'voice_type': 'mono',
-        'unfiltered': False
+        'unfiltered': False,
+        'best_params': '1000_entropy_2_1_auto_60_False'
     },
     {
         'name': 'mono_cnn',
         'model_type': 'cnn',
         'voice_type': 'mono',
-        'unfiltered': True
+        'unfiltered': True,
+        'best_params': '2_64_3_128'
     },
     {
         'name': 'mono_cnn_dft',
         'model_type': 'cnn',
         'voice_type': 'mono',
-        'unfiltered': False
+        'unfiltered': False,
+        'best_params': '2_32_5_128'
     },
     {
         'name': 'poly_rf',
         'model_type': 'rf',
         'voice_type': 'poly',
-        'unfiltered': True
+        'unfiltered': True,
+        'best_params': '1000_gini_6_1_auto_60_False'
     },
     {
         'name': 'poly_rf_dft',
         'model_type': 'rf',
         'voice_type': 'poly',
-        'unfiltered': False
+        'unfiltered': False,
+        'best_params': '900_gini_2_1_auto_80_False'
     },
     {
         'name': 'poly_cnn',
         'model_type': 'cnn',
         'voice_type': 'poly',
-        'unfiltered': True
+        'unfiltered': True,
+        'best_params': '2_32_3_128'
     },
     {
         'name': 'poly_cnn_dft',
         'model_type': 'cnn',
         'voice_type': 'poly',
-        'unfiltered': False
+        'unfiltered': False,
+        'best_params': '3_32_3_256'
     },
 ]
 
