@@ -1,0 +1,7 @@
+Model name base model
+Model Performance
+Accuracy = 0.89%.
+Model name best random
+Model Performance
+Accuracy = 0.99%.
+{'n_estimators': 900, 'min_samples_split': 2, 'min_samples_leaf': 1, 'max_features': 'auto', 'max_depth': 80, 'bootstrap': False}
