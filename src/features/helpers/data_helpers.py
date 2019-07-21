@@ -27,6 +27,44 @@ def calculate_f1(precision, recall):
     return (2 * precision * recall) / (precision + recall)
 
 
+def string_to_list(string_list):
+    """
+    string_list -> is a string in a list shape
+    e.g. '[1,2,False,String]'
+
+    returns list of parameters
+    """
+    parameters = []
+    string_parameters = string_list.strip('[]').split(',')
+    for param in string_parameters:
+        try:
+            parameters.append(int(param))
+        except ValueError:
+            # If object is not integer try to convert it to boolean.
+            if param == 'True' or param == 'False':
+                parameters.append(param == 'True')
+            else:
+                # If object is not boolean then append string.
+                parameters.append(param)
+    return parameters
+
+
+def list_to_string(list_to_convert):
+    """
+    list_to_convert -> List that should be converted into string
+    e.g. '[1,2,False,String]'
+
+    returns string
+    """
+    list_to_string = '['
+    for j in range(len(list_to_convert)):
+        list_to_string += str(list_to_convert[j]) + ','
+    # remove last ','
+    list_to_string = list_to_string[:-1]
+    list_to_string += ']'
+    return list_to_string
+
+
 def write_acc_prec_recall_f1(file_path, metrics_dict, label, dict_key):
     """
     file_path -> string describing path to the file
