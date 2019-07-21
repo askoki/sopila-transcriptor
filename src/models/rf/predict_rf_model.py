@@ -3,12 +3,12 @@ import sys
 import h5py
 from joblib import load
 from sklearn.metrics import confusion_matrix, precision_score, recall_score
+sys.path.insert(1, os.path.join(sys.path[0], '..', '..', '..'))
 sys.path.insert(1, os.path.join(sys.path[0], '..', '..'))
-sys.path.insert(1, os.path.join(sys.path[0], '..'))
 
 from settings import MODEL_DIR, CUT_DIR, REAL_DATA_AMP, REAL_DATA_PREDICTIONS, \
     REAL_DATA_UNFILTERED, STATISTICS_DIR
-from features.helpers.data_helpers import natural_sort, plot_confusion_matrix, \
+from features.helpers.data_helpers import plot_confusion_matrix, \
     write_acc_prec_recall_f1, get_test_data
 
 
@@ -22,7 +22,7 @@ if not sys.argv[2]:
     print('Enter matrix name (parameters)')
     sys.exit()
 
-model_name = str(sys.argv[2])
+model_name = ML_MODEL + '_' + str(sys.argv[2])
 
 
 if not sys.argv[3]:
@@ -31,7 +31,7 @@ if not sys.argv[3]:
 
 is_unfiltered = (sys.argv[3] == 'True')
 
-class_labels = os.listdir(CUT_DIR, ML_MODEL)
+class_labels = os.listdir(os.path.join(CUT_DIR, ML_MODEL))
 class_labels.sort()
 
 x_test, y_test = get_test_data(ML_MODEL)
@@ -40,7 +40,7 @@ rnd_clf = load(os.path.join(MODEL_DIR, ML_MODEL, model_name + '.joblib'))
 y_predicted = rnd_clf.predict(x_test)
 
 cm = confusion_matrix(y_test, y_predicted)
-plot_confusion_matrix(cm, class_labels, model_name)
+plot_confusion_matrix(cm, class_labels, model_name, ML_MODEL)
 
 test_accuracy = rnd_clf.score(X=x_test, y=y_test)
 test_precision = precision_score(y_test, y_predicted, average='micro')
@@ -55,7 +55,7 @@ metrics_dict = {
 write_acc_prec_recall_f1(
     os.path.join(
         STATISTICS_DIR,
-        model_name,
+        ML_MODEL,
         'test_stats_%s.txt' % model_name
     ),
     metrics_dict,
