@@ -109,9 +109,9 @@ metrics_dict = {
     'acc_train': train_accuracy,
     'precision_train': train_precision,
     'recall_train': train_recall,
-    'acc_test': val_accuracy,
-    'precision_test': val_precision,
-    'recall_test': val_recall
+    'acc_val': val_accuracy,
+    'precision_val': val_precision,
+    'recall_val': val_recall
 }
 
 write_rf_model_statistics(
