@@ -51,7 +51,7 @@ def write_acc_prec_recall_f1(file_path, metrics_dict, label, dict_key):
             label + '_F1 ' + str(
                 calculate_f1(
                     metrics_dict['precision_' + dict_key],
-                    metrics_dict['recall' + dict_key]
+                    metrics_dict['recall_' + dict_key]
                 )
             ), file=f
         )
