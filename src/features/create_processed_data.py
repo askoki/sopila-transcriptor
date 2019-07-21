@@ -13,7 +13,8 @@ for i, model in enumerate(ML_MODELS):
 
     print("Cutting recordings %d/%d\n" % (i + 1, len(ML_MODELS)))
     p_cut = subprocess.check_call(
-        ['python', 'cut_original_recordings.py', '10', model['name'], RAW_DATA_DIR]
+        ['python', 'cut_original_recordings.py', '10',
+            model['name'], RAW_DATA_DIR, CUT_DIR]
     )
 
     if model['voice_type'] == 'poly':
@@ -23,6 +24,7 @@ for i, model in enumerate(ML_MODELS):
                 os.path.join(CUT_DIR, model['name'])]
         )
     print(p_level)
+
     is_random_forest = (model['model_type'] == 'rf')
     data_source = None
     if model['unfiltered']:
@@ -35,7 +37,6 @@ for i, model in enumerate(ML_MODELS):
         data_source = UNFILTERED_PATH
     else:
         print("Making amplitude array data %d/%d\n" % (i + 1, len(ML_MODELS)))
-        # pdb.set_trace()
         is_random_forest = (model['model_type'] == 'rf')
         p_amplitude = subprocess.check_call(
             ['python', 'make_amplitude_array.py',

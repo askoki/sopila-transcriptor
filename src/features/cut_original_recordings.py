@@ -2,7 +2,6 @@ import os
 import sys
 sys.path.insert(1, os.path.join(sys.path[0], '..', '..'))
 
-from settings import CUT_DIR
 from helpers.file_helpers import create_directory, clear_dir
 from pydub import AudioSegment
 from settings import NUMBER_OF_CORES
@@ -25,6 +24,12 @@ if not sys.argv[3]:
     sys.exit()
 
 RAW_DATA_DIR = str(sys.argv[3])
+
+if not sys.argv[4]:
+    print('Enter path of cut dir')
+    sys.exit()
+
+CUT_DIR = str(sys.argv[4])
 
 
 def cut_folder_files(folder):
