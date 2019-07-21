@@ -50,5 +50,3 @@ for i, model in enumerate(ML_MODELS):
              model['name'], list_to_string, 'False']
         )
         print(p)
-        break
-    break
