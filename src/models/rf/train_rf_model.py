@@ -70,7 +70,7 @@ rnd_clf = RandomForestClassifier(
     max_features=parameters[4],
     max_depth=parameters[5],
     bootstrap=parameters[6],
-    n_jobs=1,
+    n_jobs=28,
     verbose=2
 )
 
