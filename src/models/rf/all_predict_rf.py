@@ -13,6 +13,6 @@ for i, model in enumerate(ML_MODELS):
 
     p = subprocess.check_call(
         ['python', 'predict_rf_model.py',
-         model['name'], model['best_params'], model['unfiltered']]
+         model['name'], model['best_params'], str(model['unfiltered'])]
     )
     print(p)
