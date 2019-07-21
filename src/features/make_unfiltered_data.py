@@ -71,7 +71,7 @@ def create_folder_raw_array(folder):
         dtype='i'
     )
 
-    folder_index = get_folder_class_index(folder)
+    folder_index = get_folder_class_index(CUT_DIR, folder)
     if is_random_forest:
         # PY3 unicode
         dt = h5py.special_dtype(vlen=str)
