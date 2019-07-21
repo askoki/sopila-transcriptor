@@ -27,16 +27,50 @@ def calculate_f1(precision, recall):
     return (2 * precision * recall) / (precision + recall)
 
 
-def write_rf_model_statistics(title, metrics_dict, training_shape,
-                              test_shape, parameters, model_name):
+def write_acc_prec_recall_f1(file_path, metrics_dict, label, dict_key):
+    """
+    file_path -> string describing path to the file
+    metrics_dict -> dict containing accuracy, precision and recall metrics
+    label -> Which label should be written in the file (Validation/Test)
+    dict_key -> Which value should be used from the metrics_dict (val/test)
+    """
+    with open(file_path, 'w+') as f:
+        print(
+            label + '_accuracy ' + str(metrics_dict['acc_' + dict_key]),
+            file=f
+        )
+        print(
+            label + '_precision ' + str(metrics_dict['precision_' + dict_key]),
+            file=f
+        )
+        print(
+            label + '_recall ' + str(metrics_dict['recall_' + dict_key]),
+            file=f
+        )
+        print(
+            label + '_F1 ' + str(
+                calculate_f1(
+                    metrics_dict['precision_' + dict_key],
+                    metrics_dict['recall' + dict_key]
+                )
+            ), file=f
+        )
+
+
+def write_rf_model_statistics(title, metrics_dict, training_shape, validation_shape,
+                              parameters, model_name, mode='val'):
     """
     title -> string reporesenting name of the model
     metrics_dict -> dict containing accuracy, precision and recall metrics
-    training_shape, test_shape -> tuple containing training and test data size
+    training_shape, validation_shape -> tuple containing training and test data size
     parameters -> dict containing tested parameters in and iteration
     model_name -> name of the folder where statistics will be saved 
     (defined according to ML_MODELS in settings.py)
+    mode -> determine the labels: validation or test
     """
+    label = 'Validation' if mode == 'val' else 'test'
+    dict_key = 'val' if mode == 'val' else 'test'
+
     with open(os.path.join(STATISTICS_DIR, model_name, title + '.txt'), 'w+') as f:
         print('n_estimators ' + str(parameters[0]), file=f)
         print('criterion ' + str(parameters[1]), file=f)
@@ -47,7 +81,8 @@ def write_rf_model_statistics(title, metrics_dict, training_shape,
         print('max_depth ' + str(parameters[6]), file=f)
 
         print('Training_shape ' + str(training_shape.shape), file=f)
-        print('Test_shape ' + str(test_shape.shape), file=f)
+        print(label + '_shape ' + str(validation_shape.shape), file=f)
+
         print('Training_accuracy ' + str(metrics_dict['acc_train']), file=f)
         print('Training_precision ' +
               str(metrics_dict['precision_train']), file=f)
@@ -56,14 +91,12 @@ def write_rf_model_statistics(title, metrics_dict, training_shape,
             metrics_dict['precision_train'],
             metrics_dict['recall_train'])), file=f
         )
-        print('Test_accuracy ' + str(metrics_dict['acc_test']), file=f)
-        print('Test_precision ' +
-              str(metrics_dict['precision_test']), file=f)
-        print('Test_recall ' + str(metrics_dict['recall_test']), file=f)
-        print('Test_F1 ' + str(calculate_f1(
-            metrics_dict['precision_test'],
-            metrics_dict['recall_test'])), file=f
-        )
+    write_acc_prec_recall_f1(
+        os.path.join(STATISTICS_DIR, model_name, title + '.txt'),
+        metrics_dict,
+        label,
+        dict_key
+    )
 
 
 def write_cnn_model_statistics(title, history_dict, input_shape,
