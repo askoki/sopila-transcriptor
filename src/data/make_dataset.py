@@ -9,7 +9,7 @@ sys.path.insert(1, os.path.join(sys.path[0], '..'))
 from features.helpers.file_helpers import clear_dir, create_directories, create_directory
 from settings import RAW_DATA_DIR, INTERIM_DATA_DIR, PROCESSED_DATA_DIR, \
     AMPLITUDE_ARRAY_PATH, CUT_DIR, STATISTICS_DIR, ML_MODELS, \
-    FIGURES_DIR, UNFILTERED_PATH
+    FIGURES_DIR, UNFILTERED_PATH, MODEL_DIR
 
 # delete contents of raw folder
 clear_dir(RAW_DATA_DIR)
@@ -27,7 +27,8 @@ directories_to_create = [
     CUT_DIR,
     FIGURES_DIR,
     UNFILTERED_PATH,
-    STATISTICS_DIR
+    STATISTICS_DIR,
+    MODEL_DIR
 ]
 
 # create directories in data folder
