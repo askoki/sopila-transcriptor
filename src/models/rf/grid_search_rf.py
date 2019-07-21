@@ -17,8 +17,7 @@ for i, model in enumerate(ML_MODELS):
     min_samples_leaf = [1]
     max_features = ['auto']
 
-    if model_type['voice_type'] == 'mono' and \
-            not model_type['unfiltered']:
+    if model['voice_type'] == 'mono' and not model['unfiltered']:
         # rf 13 classes
         n_estimators = [110, 150, 170]
         max_depth = [90, 110, 130]
@@ -46,7 +45,6 @@ for i, model in enumerate(ML_MODELS):
         list_to_string = list_to_string[:-1]
         list_to_string += ']'
 
-        print("Cutting recordings %d/%d\n" % (i + 1, len(ML_MODELS)))
         p = subprocess.check_call(
             ['python', 'train_rf_model.py',
              model['name'], list_to_string, 'False']
