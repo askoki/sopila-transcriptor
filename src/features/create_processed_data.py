@@ -23,7 +23,7 @@ for i, model in enumerate(ML_MODELS):
             ['python', 'level_combined_recordings.py',
                 os.path.join(CUT_DIR, model['name'])]
         )
-    print(p_level)
+        print(p_level)
 
     is_random_forest = (model['model_type'] == 'rf')
     data_source = None
