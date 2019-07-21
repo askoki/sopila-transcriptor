@@ -10,7 +10,7 @@ sys.path.insert(1, os.path.join(sys.path[0], '..', '..'))
 
 from settings import MODEL_DIR
 from features.helpers.data_helpers import plot_rf_model_statistics, \
-    get_train_data, write_rf_model_statistics
+    get_train_data, write_rf_model_statistics, string_to_list
 
 
 if not sys.argv[1]:
@@ -28,16 +28,7 @@ if not sys.argv[2]:
     sys.exit()
 
 
-string_parameters = sys.argv[2].strip('[]').split(',')
-parameters = []
-for param in string_parameters:
-    try:
-        parameters.append(int(param))
-    except ValueError:
-        if param == 'True' or param == 'False':
-            parameters.append(param == 'True')
-        else:
-            parameters.append(param)
+parameters = string_to_list(sys.argv[2])
 
 if not sys.argv[3]:
     print('Pass True as an argument if you would like to save a model.')

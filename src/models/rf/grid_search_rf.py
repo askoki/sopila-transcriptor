@@ -3,7 +3,10 @@ import sys
 import subprocess
 from itertools import product
 sys.path.insert(1, os.path.join(sys.path[0], '..', '..', '..'))
+sys.path.insert(1, os.path.join(sys.path[0], '..', '..'))
 from settings import ML_MODELS
+from features.data_helpers import list_to_string
+
 
 for i, model in enumerate(ML_MODELS):
     print("Training %d/%d\n" % (i + 1, len(ML_MODELS)))
@@ -38,15 +41,8 @@ for i, model in enumerate(ML_MODELS):
 
     for i, parameters in enumerate(param_cartesian_product):
         print(parameters)
-
-        list_to_string = '['
-        for j in range(len(parameters)):
-            list_to_string += str(parameters[j]) + ','
-        list_to_string = list_to_string[:-1]
-        list_to_string += ']'
-
         p = subprocess.check_call(
             ['python', 'train_rf_model.py',
-             model['name'], list_to_string, 'False']
+             model['name'], list_to_string(parameters), 'False']
         )
         print(p)
