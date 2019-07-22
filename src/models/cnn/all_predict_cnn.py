@@ -13,7 +13,7 @@ for i, model in enumerate(ML_MODELS):
 
     num_classes = 13 if model['voice_type'] == 'mono' else 49
     p = subprocess.check_call(
-        ['python', 'predict_rf_model.py', model['name'],
+        ['python', 'predict_cnn_model.py', model['name'],
          model['best_params'], str(num_classes), str(model['unfiltered'])]
     )
     print(p)

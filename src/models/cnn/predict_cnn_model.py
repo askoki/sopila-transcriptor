@@ -3,16 +3,17 @@ import sys
 import h5py
 import keras
 import numpy as np
+from keras_metrics import precision, recall
+from keras.models import model_from_json
 from sklearn.metrics import accuracy_score, confusion_matrix, \
     precision_score, recall_score
+sys.path.insert(1, os.path.join(sys.path[0], '..', '..', '..'))
 sys.path.insert(1, os.path.join(sys.path[0], '..', '..'))
-sys.path.insert(1, os.path.join(sys.path[0], '..'))
 
 from settings import MODEL_DIR, CUT_DIR, REAL_DATA_AMP, \
     REAL_DATA_UNFILTERED, REAL_DATA_PREDICTIONS, STATISTICS_DIR
-from model import get_model
 from features.helpers.data_helpers import plot_confusion_matrix, get_test_data, \
-    write_acc_prec_recall_f1, string_to_list
+    write_acc_prec_recall_f1
 
 
 if not sys.argv[1]:
@@ -28,8 +29,9 @@ if not sys.argv[2]:
     )
     sys.exit()
 
-parameters = string_to_list(sys.argv[2])
-model_name = str(sys.argv[2])
+parameters = sys.argv[2].split('_')
+parameters = [int(i) for i in parameters]
+model_name = ML_MODEL + '_' + str(sys.argv[2])
 
 if not sys.argv[3]:
     print('Enter number of classes of a model')
@@ -54,35 +56,31 @@ n_rows, n_cols = x_test.shape
 
 batch_size = 1000
 
-class_labels = os.listdir(os.path.join(CUT_DIR, model_name))
+class_labels = os.listdir(os.path.join(CUT_DIR, ML_MODEL))
 class_labels.sort()
 class_labels = [
     label.replace('vv_', '').replace(
         'silence', 'blank') for label in class_labels
 ]
 
-# model must be the same as trained
-model = get_model(
-    (n_cols, 1),
-    num_classes,
-    cnn_layers=parameters[0],
-    num_filters=parameters[1],
-    filter_size=parameters[2],
-    hidden_layers=parameters[3]
-)
-
 x_test = np.expand_dims(x_test, axis=3)
 
 # load the model we saved
-model.load_weights(os.path.join(MODEL_DIR, ML_MODEL, model_name + '.h5'))
+with open(os.path.join(MODEL_DIR, ML_MODEL, 'model_' + model_name + '.json'), 'r') as f:
+    model = model_from_json(f.read())
+
+# load the model weights
+model.load_weights(os.path.join(MODEL_DIR, ML_MODEL, 'model_' + model_name + '.h5'))
 model.compile(
     loss=keras.losses.categorical_crossentropy,
     optimizer=keras.optimizers.Adadelta(),
-    metrics=['accuracy']
+    metrics=['accuracy', precision(), recall()]
 )
 
 true_classes = y_test
-predicted_classes = model.predict_classes(x_test, batch_size=20)
+
+predicted_classes = model.predict(x_test, batch_size=20)
+predicted_classes = np.argmax(predicted_classes, axis=1)
 
 test_accuracy = accuracy_score(predicted_classes, true_classes)
 test_precision = precision_score(
@@ -129,7 +127,8 @@ for filename in os.listdir(real_data_path):
 
     to_be_predicted = np.expand_dims(features, axis=3)
     # predicted class
-    predicted_classes = model.predict_classes(to_be_predicted, batch_size=20)
+    predicted_classes = model.predict(to_be_predicted, batch_size=20)
+    predicted_classes = np.argmax(predicted_classes, axis=1)
     file.close()
 
     predicted_file = h5py.File(os.path.join(
