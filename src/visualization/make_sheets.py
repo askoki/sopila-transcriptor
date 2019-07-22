@@ -14,8 +14,10 @@ class ToneParser:
 
     tone_list = []
 
-    def __init__(self, filename, class_labels=None):
-        file = h5py.File(os.path.join(REAL_DATA_PREDICTIONS, filename), 'r')
+    def __init__(self, filename, model_name, class_labels=None):
+        file = h5py.File(
+            os.path.join(REAL_DATA_PREDICTIONS, model_name, filename), 'r'
+        )
         self.tone_list = file['predictions'].value
         file.close()
 
@@ -308,7 +310,7 @@ class ToneParser:
         notes.remove_commands.append('Time_signature_engraver')
         notes.remove_commands.append('Bar_engraver')
 
-        for tone, tone_length in self.get_tones_dict():
+        for tone, tone_length in self.get_tones_dict_mono():
             duration = self.get_duration_label(tone_length)
 
             if duration:
