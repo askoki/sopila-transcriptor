@@ -84,8 +84,8 @@ predicted_classes = np.argmax(predicted_classes, axis=1)
 
 test_accuracy = accuracy_score(predicted_classes, true_classes)
 test_precision = precision_score(
-    true_classes, predicted_classes, average='micro')
-test_recall = recall_score(true_classes, predicted_classes, average='micro')
+    true_classes, predicted_classes, average='macro')
+test_recall = recall_score(true_classes, predicted_classes, average='macro')
 
 metrics_dict = {
     'acc_test': test_accuracy,

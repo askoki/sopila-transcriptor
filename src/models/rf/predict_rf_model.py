@@ -43,8 +43,8 @@ cm = confusion_matrix(y_test, y_predicted)
 plot_confusion_matrix(cm, class_labels, model_name, ML_MODEL)
 
 test_accuracy = rnd_clf.score(X=x_test, y=y_test)
-test_precision = precision_score(y_test, y_predicted, average='micro')
-test_recall = recall_score(y_test, y_predicted, average='micro')
+test_precision = precision_score(y_test, y_predicted, average='macro')
+test_recall = recall_score(y_test, y_predicted, average='macro')
 
 metrics_dict = {
     'acc_test': test_accuracy,
