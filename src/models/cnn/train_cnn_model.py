@@ -63,12 +63,11 @@ n_rows, n_cols = x_train.shape
 
 x_train = np.expand_dims(x_train, axis=3)
 y_train = keras.utils.to_categorical(
-    y_train, num_classes=num_classes, dtype='float32'
+    y_train, num_classes=num_classes
 )
 
 validation_split = 0.2
 
-parameters = parameters[0]
 print(
     'Parameters cnn_layers %s, num_filters %s, filter size %s, hidden layers %s' %
     (parameters[0], parameters[1], parameters[2], parameters[3])

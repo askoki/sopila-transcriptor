@@ -18,7 +18,7 @@ for i, model in enumerate(ML_MODELS):
 
     num_classes = 13 if model['voice_type'] == 'mono' else 49
     p = subprocess.check_call(
-        ['python', 'train_rf_model.py',
+        ['python', 'train_cnn_model.py',
          model['name'], string_parameters, 'True', str(num_classes)]
     )
     print(p)
