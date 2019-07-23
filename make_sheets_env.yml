@@ -1,0 +1,44 @@
+name: abjad2_sopila_env
+channels:
+  - defaults
+dependencies:
+  - certifi=2019.3.9=py36_0
+  - pip=19.0.3=py36_0
+  - python=3.6.8=h9f7ef89_7
+  - setuptools=40.8.0=py36_0
+  - sqlite=3.26.0=he774522_0
+  - vc=14.1=h0510ff6_4
+  - vs2015_runtime=14.15.26706=h3a45250_0
+  - wheel=0.33.1=py36_0
+  - wincertstore=0.2=py36h7fe50ca_0
+  - pip:
+    - abjad==3.0.0
+    - alabaster==0.7.12
+    - babel==2.6.0
+    - chardet==3.0.4
+    - colorama==0.4.1
+    - docutils==0.14
+    - h5py==2.9.0
+    - idna==2.8
+    - imagesize==1.1.0
+    - jinja2==2.10
+    - markupsafe==1.1.1
+    - numpy==1.16.2
+    - packaging==19.0
+    - ply==3.11
+    - pygments==2.3.1
+    - pyparsing==2.3.1
+    - pytz==2018.9
+    - requests==2.21.0
+    - roman==3.1
+    - six==1.12.0
+    - snowballstemmer==1.2.1
+    - sphinx==1.8.5
+    - sphinx-autodoc-typehints==1.6.0
+    - sphinx-rtd-theme==0.4.3
+    - sphinxcontrib-websupport==1.1.0
+    - unidecode==1.0.23
+    - uqbar==0.2.17
+    - urllib3==1.24.1
+prefix: C:\Users\askoki\AppData\Local\conda\conda\envs\abjad2_sopila_env
+
