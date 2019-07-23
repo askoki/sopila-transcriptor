@@ -55,5 +55,11 @@ Project Organization
 
 
 --------
+Environment instructions:
 
+1. conda env create -f sopela_env.yml
+Different env for using visualization/make_sheets.py due to python version incompatibility
+2. conda env create -f make_sheets_env.yml
+3. conda activate sopela_env
+4. pip install -r requirements.txt
 <p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
