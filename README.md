@@ -10,7 +10,7 @@ Project Organization
     ├── Makefile           <- Makefile with commands like `make data` or `make train`
     ├── README.md          <- The top-level README for developers using this project.
     ├── data
-    │   ├── external       <- Data from third party sources.
+    │   ├── real_data      <- Data for transciption of real music pieces.
     │   ├── interim        <- Intermediate data that has been transformed.
     │   ├── processed      <- The final, canonical data sets for modeling.
     │   └── raw            <- The original, immutable data dump.
@@ -19,15 +19,13 @@ Project Organization
     │
     ├── models             <- Trained and serialized models, model predictions, or model summaries
     │
-    ├── notebooks          <- Jupyter notebooks. Naming convention is a number (for ordering),
-    │                         the creator's initials, and a short `-` delimited description, e.g.
-    │                         `1.0-jqp-initial-data-exploration`.
     │
     ├── references         <- Data dictionaries, manuals, and all other explanatory materials.
     │
     ├── reports            <- Generated analysis as HTML, PDF, LaTeX, etc.
     │   └── figures        <- Generated graphics and figures to be used in reporting
     │   └── sheets         <- Generated PDF music sheet predictions
+    │   └── statistics     <- Accuracy, precision, recall and F1 score for training, validation and test data.
     │
     ├── requirements.txt   <- The requirements file for reproducing the analysis environment, e.g.
     │                         generated with `pip freeze > requirements.txt`
@@ -41,22 +39,19 @@ Project Organization
     │   │   └── make_dataset.py
     │   │
     │   ├── features       <- Scripts to turn raw data into features for modeling
-    │   │   ├── merge_audio_data.py
-    |   |   ├── level_combined_recordings.py
-    │   │   ├── cut_original_recordings.py
-    │   │   ├── make_amplitude_array.py
-    │   │   └── create_train_test_data.py
+    │   │   ├── create_processed_data <- Creates processed data for all models
+    │   │   └── alternate_data_create.py <- Creates processed real music recording for model prediction
     │   │
     │   ├── models         <- Scripts to train models and then use trained models to make
     │   │   │                 predictions
-    |   |   ├── model.py
-    │   │   ├── predict_model.py
-    │   │   └── train_model.py
+    |   |   ├── rf         <- Random forest train and predict scripts
+    │   │   └── cnn        <- Convolitional Neural Network train and predict scripts
     │   │
     │   └── visualization  <- Scripts to create exploratory and results oriented visualizations
     │       └── make_sheets.py
     │
-    └── tox.ini            <- tox file with settings for running tox; see tox.testrun.org
+    ├── tox.ini            <- tox file with settings for running tox; see tox.testrun.org
+    └── settings.py        <- Project specific settings
 
 
 --------
