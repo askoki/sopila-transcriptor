@@ -80,5 +80,8 @@ data/*
 models/*
 secrets.json
 
+# exclude lilypond files
+*.ly
+
 # Mac OS-specific storage files
 .DS_Store
